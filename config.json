@@ -1,0 +1,12 @@
+{
+    "training":{        
+        "LEARNING_RATE": 0.01,
+        "EPOCHS": 1,
+        "MOMENTUM": 0.9
+    },
+
+    "strategy":{
+        "NUM_CLIENTS": 10
+    }
+    
+}
