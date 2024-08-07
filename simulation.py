@@ -1,50 +1,44 @@
 import flwr as fl
-from torch.utils.data import DataLoader
-from config import NUM_CLIENTS
-from strategy import strategy
-from flwr_datasets import FederatedDataset
+from flwr.common import Metrics, NDArrays, Scalar
 from dataloader import get_datasets, apply_transforms
+from typing import Dict, List, Tuple
+from utils import get_evaluate_fn, clear_cuda_cache
+from config import LEARNING_RATE, EPOCHS, NUM_CLIENTS, NUM_ROUNDS
+from strategy import create_strategy
+#from flwr_datasets import FederatedDataset
 from datasets.utils.logging import disable_progress_bar
-from client import FlowerClient
-from utils import clear_cuda_cache
+from client import get_client_fn
 import matplotlib.pyplot as plt
-#from model import Net
+from torch.utils.data import DataLoader
 
-
-def get_client_fn(dataset: FederatedDataset):
-    """Return a function to construct a client.
-
-    The VirtualClientEngine will execute this function whenever a client is sampled by
-    the strategy to participate.
-    """
-
-    def client_fn(cid: str) -> fl.client.Client:
-        """Construct a FlowerClient with its own dataset partition."""
-
-        # Let's get the partition corresponding to the i-th client
-        client_dataset = dataset.load_partition(int(cid), "train")
-
-        # Now let's split it into train (90%) and validation (10%)
-        client_dataset_splits = client_dataset.train_test_split(test_size=0.1, seed=42)
-
-        trainset = client_dataset_splits["train"]
-        valset = client_dataset_splits["test"]
-
-        # Now we apply the transform to each batch.
-        trainloader = DataLoader(
-            trainset.with_transform(apply_transforms), batch_size=32, shuffle=True
-        )
-        valloader = DataLoader(valset.with_transform(apply_transforms), batch_size=32)
-
-        # Create and return client
-        return FlowerClient(trainloader, valloader).to_client()
-
-    return client_fn
-
+## Collecting Datasets
 mnist_fds, centralized_testset = get_datasets()
 client_fn_callback = get_client_fn(mnist_fds)
-# With a dictionary, you tell Flower's VirtualClientEngine that each
-# client needs exclusive access to these many resources in order to run
+
+
+def fit_config(server_round: int) -> Dict[str, Scalar]:
+    """Return a configuration with static batch size and (local) epochs."""
+    config = {
+        "epochs": EPOCHS,  # Number of local epochs done by clients
+        "lr": LEARNING_RATE,  # Learning rate to use by clients during fit()
+    }
+    return config
+    
+
+
+def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
+    """Aggregation function for (federated) evaluation metrics, i.e. those returned by
+    the client's evaluate() method."""
+    # Multiply accuracy of each client by number of examples used
+    accuracies = [num_examples * m["accuracy"] for num_examples, m in metrics]
+    examples = [num_examples for num_examples, _ in metrics]
+
+    # Aggregate and return custom metric (weighted average)
+    return {"accuracy": sum(accuracies) / sum(examples)}
+
+strategy = create_strategy(fit_config, weighted_average, get_evaluate_fn(centralized_testset))
+
+#Client Resources
 client_resources = {"num_cpus": 1, "num_gpus": 1}
 
 # Let's disable tqdm progress bar in the main thread (used by the server)
@@ -56,7 +50,7 @@ clear_cuda_cache()
 history = fl.simulation.start_simulation(
     client_fn=client_fn_callback,  # a callback to construct a client
     num_clients=NUM_CLIENTS,  # total number of clients in the experiment
-    config=fl.server.ServerConfig(num_rounds=10),  # let's run for 10 rounds
+    config=fl.server.ServerConfig(num_rounds=NUM_ROUNDS),  # let's run for 10 rounds
     strategy=strategy,  # the strategy that will orchestrate the whole FL pipeline
     client_resources=client_resources,
     actor_kwargs={

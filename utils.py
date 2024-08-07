@@ -11,6 +11,7 @@ import torch
 from collections import OrderedDict
 from dataloader import apply_transforms
 from torch.utils.data import DataLoader
+from utils import NUM_CLASSES
 
 
 def train(net, trainloader, optim, epochs, device: str):
@@ -55,7 +56,7 @@ def get_evaluate_fn(centralized_testset: Dataset):
         The, the model will be evaluate on the test set (recall this is the
         whole MNIST test set)."""
 
-        model = Net(num_classes=NUM_CLIENTS)
+        model = Net(num_classes=NUM_CLASSES)
 
         # Determine device
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")

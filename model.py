@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 #from torch.utils.data import DataLoader
 
+
 ## This tutorial is not so much about novel architectural designs so we keep things 
 ## simple and make use of a typical CNN that is adequate for the MNIST image classification task.
 

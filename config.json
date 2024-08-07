@@ -2,11 +2,17 @@
     "training":{        
         "LEARNING_RATE": 0.01,
         "EPOCHS": 1,
-        "MOMENTUM": 0.9
+        "MOMENTUM": 0.9,
+        "NUM_CLASSES": 10
     },
 
     "strategy":{
-        "NUM_CLIENTS": 10
+        "NUM_CLIENTS": 4,
+        "NUM_ROUNDS": 10
+    },
+
+    "server":{
+        "SERVER_ADDRESS": "0.0.0.0:8080"
     }
     
 }
