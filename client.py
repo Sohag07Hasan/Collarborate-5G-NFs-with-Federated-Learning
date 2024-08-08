@@ -9,7 +9,7 @@ from torch.utils.data import DataLoader
 from config import SERVER_ADDRESS, NUM_CLASSES
 #from simulation import client_fn_callback
 from flwr_datasets import FederatedDataset
-from dataloader import apply_transforms
+from dataloader import get_datasets, apply_transforms
 
 
 class FlowerClient(fl.client.NumPyClient):
@@ -67,33 +67,26 @@ class FlowerClient(fl.client.NumPyClient):
         return float(loss), len(self.valloader), {"accuracy": accuracy}
 
 
-## Return Client function with indiviual Train datasets
-def get_client_fn(dataset: FederatedDataset):
-    """Return a function to construct a client.
+#Creates a lcient
+def create_client(dataset: FederatedDataset, cid: int) -> fl.client.Client:
+    # Let's get the partition corresponding to the i-th client
+    client_dataset = dataset.load_partition(int(cid), "train")
 
-    The VirtualClientEngine will execute this function whenever a client is sampled by
-    the strategy to participate.
-    """
+    # Now let's split it into train (90%) and validation (10%)
+    client_dataset_splits = client_dataset.train_test_split(test_size=0.1, seed=42)
 
-    def client_fn(cid: str) -> fl.client.Client:
-        """Construct a FlowerClient with its own dataset partition."""
+    trainset = client_dataset_splits["train"]
+    valset = client_dataset_splits["test"]
 
-        # Let's get the partition corresponding to the i-th client
-        client_dataset = dataset.load_partition(int(cid), "train")
+    # Now we apply the transform to each batch.
+    trainloader = DataLoader(
+        trainset.with_transform(apply_transforms), batch_size=32, shuffle=True
+    )
+    valloader = DataLoader(valset.with_transform(apply_transforms), batch_size=32)
 
-        # Now let's split it into train (90%) and validation (10%)
-        client_dataset_splits = client_dataset.train_test_split(test_size=0.1, seed=42)
+    # Create and return client
+    return FlowerClient(trainloader, valloader).to_client()
 
-        trainset = client_dataset_splits["train"]
-        valset = client_dataset_splits["test"]
 
-        # Now we apply the transform to each batch.
-        trainloader = DataLoader(
-            trainset.with_transform(apply_transforms), batch_size=32, shuffle=True
-        )
-        valloader = DataLoader(valset.with_transform(apply_transforms), batch_size=32)
-
-        # Create and return client
-        return FlowerClient(trainloader, valloader).to_client()
-
-    return client_fn
+if __name__ =="__main__":
+    print('client.py')
