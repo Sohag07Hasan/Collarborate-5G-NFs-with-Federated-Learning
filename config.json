@@ -8,7 +8,9 @@
 
     "strategy":{
         "NUM_CLIENTS": 4,
-        "NUM_ROUNDS": 10
+        "NUM_ROUNDS": 10,
+        "FRACTION_FIT": 1,
+        "FRACTION_EVAL": 1
     },
 
     "server":{

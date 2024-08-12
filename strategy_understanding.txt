@@ -1,0 +1,28 @@
+In the context of Flower's federated learning framework, the callback functions are generally tied to the concept of rounds rather than epochs. Here’s a breakdown of the frequency with which each callback function is typically called:
+
+1. on_fit_config_fn
+    Frequency: Called at the beginning of each round.
+    Purpose: Configures training on the client side, like setting the number of local epochs, learning rate, or any other hyperparameters.
+    Control: This function is called once per round for each client selected to participate in that round. It cannot be set to trigger based on epochs.
+
+2. evaluate_fn
+    Frequency: Called at the end of each round, after the global model has been updated with the aggregated weights from clients.
+    Purpose: Evaluates the global model on a centralized dataset.
+    Control: This function is called once per round. You can influence its frequency by adjusting the number of rounds or by choosing not to evaluate in certain rounds, but it's inherently tied to the rounds.
+
+3. evaluate_metrics_aggregation_fn
+    Frequency: Called at the end of each evaluation step within a round.
+    Purpose: Aggregates the evaluation metrics reported by each client during a round.
+    Control: This is automatically called whenever an evaluation is performed, and its frequency is tied to the evaluation steps within rounds.
+
+4. fit_metrics_aggregation_fn
+    Frequency: Called at the end of each round after the clients have completed their training and reported their metrics back to the server.
+    Purpose: Aggregates the training metrics reported by each client.
+    Control: This is also tied to rounds and is called once per round when training is completed.
+
+Custom Frequency Control:
+By Rounds: The frequency of all these callback functions is generally tied to rounds in federated learning. You control the number of rounds using the num_rounds parameter in the server's configuration.
+
+Custom Scheduling: If you want to customize how often these functions are called, you would need to alter the structure of your rounds. For example, you might skip evaluation or metric aggregation in certain rounds, or introduce custom logic to conditionally call these functions based on specific criteria.
+
+Epochs: These callback functions do not have direct control over the frequency within epochs because the concept of "epochs" is local to each client. However, you can configure the number of epochs within the on_fit_config_fn to control how long each client trains before it reports back to the server.

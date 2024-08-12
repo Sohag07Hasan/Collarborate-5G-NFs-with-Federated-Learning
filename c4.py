@@ -7,7 +7,8 @@ if __name__ =="__main__":
     ## Collecting Datasets
     mnist_fds, centralized_testset = get_datasets()    
    
-    fl.client.start_numpy_client(
+    #fl.client.start_numpy_client(
+    fl.client.start_client(
         server_address=SERVER_ADDRESS, 
         client=create_client(mnist_fds, 0)
     )

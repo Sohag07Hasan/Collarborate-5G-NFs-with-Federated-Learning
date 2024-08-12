@@ -1,12 +1,11 @@
 import flwr as fl
-from flwr.server import start_server
 from config import SERVER_ADDRESS, NUM_ROUNDS
 from strategy import create_strategy  # Import the strategy from strategy.py
 
 #from client import get_client_fn
 from dataloader import get_datasets, apply_transforms
-from config import LEARNING_RATE, EPOCHS, NUM_CLIENTS, NUM_ROUNDS
-from flwr.common import Metrics, NDArrays, Scalar
+from config import LEARNING_RATE, EPOCHS, NUM_ROUNDS
+from flwr.common import Metrics, Scalar
 from utils import get_evaluate_fn, clear_cuda_cache
 from typing import Dict, List, Tuple
 
@@ -35,11 +34,20 @@ def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
     return {"accuracy": sum(accuracies) / sum(examples)}
 
 
+def fit_metrics_aggregation(metrics: List[Tuple[int, Metrics]]) -> Metrics:
+    # Example: compute weighted average accuracy
+    print(metrics)
+    accuracies = [num_examples * m["accuracy"] for num_examples, m in metrics]
+    examples = [num_examples for num_examples, _ in metrics]
+
+    # Aggregate and return custom metric (weighted average)
+    return {"accuracy": sum(accuracies) / sum(examples)}
+
 if __name__ == "__main__":
     
     # Define the server configuration and start the server
     server_config = fl.server.ServerConfig(num_rounds=NUM_ROUNDS)
-    strategy = create_strategy(fit_config, weighted_average, get_evaluate_fn(centralized_testset))
+    strategy = create_strategy(fit_config, weighted_average, get_evaluate_fn(centralized_testset), fit_metrics_aggregation)
     fl.server.start_server(
         server_address=SERVER_ADDRESS,
         config=server_config,
