@@ -4,14 +4,13 @@ We'll be training the model in a Federated setting. In order to do that, we need
 * `train()` that will train the model given a dataloader.
 * `test()` that will be used to evaluate the performance of the model on held-out data, e.g., a training set.
 '''
-from config import *
+from config import NUM_ROUNDS, GLOBAL_MODEL_PATH, NUM_CLASSES
 from datasets import Dataset
 from model import Net
 import torch
 from collections import OrderedDict
 from dataloader import apply_transforms
 from torch.utils.data import DataLoader
-from utils import NUM_CLASSES
 
 
 def train(net, trainloader, optim, epochs, device: str):
@@ -66,6 +65,11 @@ def get_evaluate_fn(centralized_testset: Dataset):
         params_dict = zip(model.state_dict().keys(), parameters)
         state_dict = OrderedDict({k: torch.Tensor(v) for k, v in params_dict})
         model.load_state_dict(state_dict, strict=True)
+
+        # Save the model after the final round
+        if server_round == NUM_ROUNDS:  #NUM_ROUNDS is defined globally
+            torch.save(model.state_dict(), GLOBAL_MODEL_PATH)
+            print(f"Global model saved at round {server_round} to global_model.pth")
 
         # Apply transform to dataset
         testset = centralized_testset.with_transform(apply_transforms)

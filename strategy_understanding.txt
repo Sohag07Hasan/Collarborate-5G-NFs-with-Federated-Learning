@@ -21,8 +21,8 @@ In the context of Flower's federated learning framework, the callback functions 
     Control: This is also tied to rounds and is called once per round when training is completed.
 
 Custom Frequency Control:
-By Rounds: The frequency of all these callback functions is generally tied to rounds in federated learning. You control the number of rounds using the num_rounds parameter in the server's configuration.
+    By Rounds: The frequency of all these callback functions is generally tied to rounds in federated learning. You control the number of rounds using the num_rounds parameter in the server's configuration.
+    Custom Scheduling: If you want to customize how often these functions are called, you would need to alter the structure of your rounds. For example, you might skip evaluation or metric aggregation in certain rounds, or introduce custom logic to conditionally call these functions based on specific criteria.
+    Epochs: These callback functions do not have direct control over the frequency within epochs because the concept of "epochs" is local to each client. However, you can configure the number of epochs within the on_fit_config_fn to control how long each client trains before it reports back to the server.
 
-Custom Scheduling: If you want to customize how often these functions are called, you would need to alter the structure of your rounds. For example, you might skip evaluation or metric aggregation in certain rounds, or introduce custom logic to conditionally call these functions based on specific criteria.
-
-Epochs: These callback functions do not have direct control over the frequency within epochs because the concept of "epochs" is local to each client. However, you can configure the number of epochs within the on_fit_config_fn to control how long each client trains before it reports back to the server.
+>> 

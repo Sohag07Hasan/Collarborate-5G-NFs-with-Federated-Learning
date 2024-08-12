@@ -3,10 +3,10 @@ from config import SERVER_ADDRESS, NUM_ROUNDS
 from strategy import create_strategy  # Import the strategy from strategy.py
 
 #from client import get_client_fn
-from dataloader import get_datasets, apply_transforms
+from dataloader import get_datasets
 from config import LEARNING_RATE, EPOCHS, NUM_ROUNDS
 from flwr.common import Metrics, Scalar
-from utils import get_evaluate_fn, clear_cuda_cache
+from utils import get_evaluate_fn
 from typing import Dict, List, Tuple
 
 

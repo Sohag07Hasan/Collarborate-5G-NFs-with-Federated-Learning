@@ -31,3 +31,9 @@ def apply_transforms(batch):
     transforms = Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])
     batch["image"] = [transforms(img) for img in batch["image"]]
     return batch
+
+
+## client datasets
+def get_client_datasets(client_id):
+    _, dataset = get_datasets()
+    return dataset
