@@ -3,7 +3,7 @@ from config import SERVER_ADDRESS, NUM_ROUNDS
 from strategy import create_strategy  # Import the strategy from strategy.py
 
 #from client import get_client_fn
-from dataloader import get_datasets
+from dataloader import get_datasets, get_centralized_testset
 from config import LEARNING_RATE, EPOCHS, NUM_ROUNDS
 from flwr.common import Metrics, Scalar
 from utils import get_evaluate_fn
@@ -11,10 +11,9 @@ from typing import Dict, List, Tuple
 
 
 ## Collecting Datasets
-mnist_fds, centralized_testset = get_datasets()
-# client_fn_callback = get_client_fn(mnist_fds)
+centralized_testset = get_centralized_testset()
 
-
+#before fitting each client locally this function will send the fit configuraiton
 def fit_config(server_round: int) -> Dict[str, Scalar]:
     """Return a configuration with static batch size and (local) epochs."""
     config = {

@@ -2,11 +2,11 @@ import flwr as fl
 from collections import OrderedDict
 from typing import Dict, List, Tuple
 from flwr.common import NDArrays, Scalar
-from utils import train, test
+from utils import train, test, to_tensor
 from model import Net
 import torch
 from torch.utils.data import DataLoader
-from config import SERVER_ADDRESS, NUM_CLASSES
+from config import SERVER_ADDRESS, NUM_CLASSES, BATCH_SIZE
 #from simulation import client_fn_callback
 from flwr_datasets import FederatedDataset
 from dataloader import get_datasets, apply_transforms
@@ -68,22 +68,12 @@ class FlowerClient(fl.client.NumPyClient):
 
 
 #Creates a lcient
-def create_client(dataset: FederatedDataset, cid: int) -> fl.client.Client:
-    # Let's get the partition corresponding to the i-th client
-    client_dataset = dataset.load_partition(int(cid), "train")
-
-    # Now let's split it into train (90%) and validation (10%)
-    client_dataset_splits = client_dataset.train_test_split(test_size=0.1, seed=42)
-
-    trainset = client_dataset_splits["train"]
-    valset = client_dataset_splits["test"]
+def create_client(training_set, validation_set, cid: int) -> fl.client.Client:
 
     # Now we apply the transform to each batch.
-    trainloader = DataLoader(
-        trainset.with_transform(apply_transforms), batch_size=32, shuffle=True
-    )
-    valloader = DataLoader(valset.with_transform(apply_transforms), batch_size=32)
-
+    trainloader = DataLoader(to_tensor(training_set), batch_size=BATCH_SIZE, shuffle=True)
+    valloader = DataLoader(to_tensor(validation_set), batch_size=32)
+    
     # Create and return client
     return FlowerClient(trainloader, valloader).to_client()
 

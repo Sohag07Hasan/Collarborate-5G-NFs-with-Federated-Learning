@@ -2,23 +2,27 @@
     "training":{        
         "LEARNING_RATE": 0.01,
         "EPOCHS": 1,
+        "BATCH_SIZE": 32,
         "MOMENTUM": 0.9,
-        "NUM_CLASSES": 10
+        "NUM_FEATURES": 30,
+        "NUM_CLASSES": 2
     },
 
     "strategy":{
         "NUM_CLIENTS": 4,
         "NUM_ROUNDS": 3,
-        "FRACTION_FIT": 1,
-        "FRACTION_EVAL": 1
+        "FRACTION_FIT": 0.5,
+        "FRACTION_EVAL": 0.5
     },
 
     "server":{
-        "SERVER_ADDRESS": "0.0.0.0:8080"
+        "SERVER_ADDRESS": "127.0.0.1:8080"
         
     },
     "saved_path":{
-        "GLOBAL_MODEL_PATH": "./saved_models/global_model.pth"
+        "GLOBAL_MODEL_PATH": "./saved_models/global_model.pth",
+        "TRAIN_DATASET_PATH": "./dataset/client_{0}/train/client_{0}_train.csv",
+        "TEST_DATASET_PATH": "./dataset/client_{0}/test/client_{0}_test.csv"
     }
     
 }
