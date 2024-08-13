@@ -2,11 +2,12 @@ import torch
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
-from dataloader import get_client_datasets, apply_transforms  # Assuming this function gets local client datasets
+from dataloader import get_evaluation_datasets_by_client  # Assuming this function gets local client datasets
 from model import Net
 from collections import OrderedDict
-from config import NUM_CLASSES, NUM_CLIENTS, GLOBAL_MODEL_PATH
+from config import NUM_CLASSES, NUM_CLIENTS, GLOBAL_MODEL_PATH, BATCH_SIZE
 from torch.utils.data import DataLoader
+from utils import to_tensor
 
 # Load the global model from the saved path
 def load_model(model_path=GLOBAL_MODEL_PATH, num_classes=NUM_CLASSES):
@@ -15,15 +16,16 @@ def load_model(model_path=GLOBAL_MODEL_PATH, num_classes=NUM_CLASSES):
     model.eval()
     return model
 
+
 # Run inference on a client's dataset
 def run_inference(model, dataloader, device):
     all_preds = []
     all_labels = []
 
     with torch.no_grad():
-        for data in dataloader:
-            images, labels = data["image"].to(device), data["label"].to(device)
-            outputs = model(images)
+        for batch in dataloader:
+            features, labels = batch[0].to(device), batch[1].to(device)
+            outputs = model(features)
             _, preds = torch.max(outputs.data, 1)
             
             all_preds.extend(preds.cpu().numpy())
@@ -41,28 +43,14 @@ def plot_confusion_matrix(y_true, y_pred, classes):
 def main_all_together():
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     model = load_model()
-    model.to(device)
-    
-    all_preds = []
-    all_labels = []
+    model.to(device)    
     num_clients = NUM_CLIENTS  # Define or import this variable
-    
-    testset = get_client_datasets(1)  
-    client_dataloader = DataLoader(testset.with_transform(apply_transforms), batch_size=50)
-    
-    for client_id in range(num_clients):
-        print(f"Running inference for client {client_id}")
-        #client_dataloader = get_client_datasets(client_id)  # Load the local client data
-        preds, labels = run_inference(model, client_dataloader, device)
-        
-        all_preds.extend(preds)
-        all_labels.extend(labels)
-    
-    all_preds = np.array(all_preds)
-    all_labels = np.array(all_labels)
-
-    classes = np.arange(NUM_CLASSES)  # Define or import this variable
-    plot_confusion_matrix(all_labels, all_preds, classes)
+    for client_id in range(1, num_clients+1):
+        testset = get_evaluation_datasets_by_client(client_id)  
+        testloader = DataLoader(to_tensor(testset), batch_size=BATCH_SIZE)
+        preds, labels = run_inference(model, testloader, device)
+        classes = np.arange(NUM_CLASSES)  # Define or import this variable
+        plot_confusion_matrix(labels, preds, classes)
 
 if __name__ == "__main__":
     main_all_together()

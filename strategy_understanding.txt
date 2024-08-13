@@ -25,4 +25,42 @@ Custom Frequency Control:
     Custom Scheduling: If you want to customize how often these functions are called, you would need to alter the structure of your rounds. For example, you might skip evaluation or metric aggregation in certain rounds, or introduce custom logic to conditionally call these functions based on specific criteria.
     Epochs: These callback functions do not have direct control over the frequency within epochs because the concept of "epochs" is local to each client. However, you can configure the number of epochs within the on_fit_config_fn to control how long each client trains before it reports back to the server.
 
->> 
+
+------------------- FedAvg Strategy Understanding--------------------------------------------
+
+FedAvg and Weight Averaging:
+    After every round, the server receives updated model weights (or gradients) from all participating clients.
+    The server averages these weights (using the FedAvg algorithm) to create a new global model.
+    This updated global model is then sent back to the clients, which use these new weights to continue training in the next round.
+
+evaluate_metrics_aggregation_fn:
+    This function is used only for aggregating evaluation metrics (like accuracy and loss) across all clients to give a "centralized view" of the model's performance.
+    It does not affect the weight updates or the model's training process.
+    Its sole purpose is to provide a summarized view of how well the model is performing on the distributed data after each round of training. This summary is typically shown in the logs or used for monitoring the training process.
+
+evaluate_fn:
+The evaluate_fn function is used to evaluate the global model on a centralized test dataset (if provided).
+Similar to evaluate_metrics_aggregation_fn, it does not affect the weight updates.
+The main purpose of evaluate_fn is to provide a centralized evaluation of the global model using a validation or test dataset that might not be distributed across the clients.
+This is useful for understanding how well the global model is performing on unseen data or a held-out validation set.
+
+So, in summary:
+    FedAvg averages weights across clients after each round and updates the global model.
+    evaluate_metrics_aggregation_fn provides a summary of the distributed evaluation metrics and has no impact on weight updates.
+    evaluate_fn provides centralized evaluation metrics on a test/validation set and also does not affect weight updates.
+
+>>> History Output for 2 rounds <<<
+
+History (loss, distributed):
+        round 1: 58.89218861224509
+        round 2: 4.695986254911972
+History (loss, centralized):
+        round 0: 5361.33695858717
+        round 1: 331.4346305915169
+        round 2: 14.861822886402791
+History (metrics, distributed, evaluate):
+{'accuracy': [(1, 0.9922463028186573), (2, 0.9999381353946617)]}
+History (metrics, centralized):
+{'accuracy': [(0, 0.6334332171146708),
+              (1, 0.9906931345297965),
+              (2, 0.9999678658076125)]}

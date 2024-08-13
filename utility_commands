@@ -1,0 +1,2 @@
+>>to kill all services on a specfic port like 8080
+    sudo kill -9 $(lsof -t -i:8080)
