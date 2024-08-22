@@ -19,4 +19,6 @@ dataset/
 models/
 row_data/
 scalers/
-
+saved_models/
+feature_engineering/dataset/
+feature_engineering/*.csv

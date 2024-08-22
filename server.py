@@ -1,12 +1,13 @@
 import flwr as fl
 from strategy import create_strategy  
 from dataloader import get_datasets, get_centralized_testset
-from config import LEARNING_RATE, EPOCHS, NUM_ROUNDS, SERVER_ADDRESS, NUM_ROUNDS, HISTORY_PATH
+from config import LEARNING_RATE, EPOCHS, NUM_ROUNDS, SERVER_ADDRESS, NUM_ROUNDS, HISTORY_PATH_TXT, HISTORY_PATH_PKL
 from flwr.common import Metrics, Scalar
 from utils import get_evaluate_fn, clear_cuda_cache
 from typing import Dict, List, Tuple
 import pandas as pd
 import matplotlib.pyplot as plt
+import pickle
 
 
 ## Collecting Datasets
@@ -34,7 +35,7 @@ def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
 
 def fit_metrics_aggregation(metrics: List[Tuple[int, Metrics]]) -> Metrics:
     # Example: compute weighted average accuracy
-    print(metrics)
+    #print(metrics)
     accuracies = [num_examples * m["accuracy"] for num_examples, m in metrics]
     examples = [num_examples for num_examples, _ in metrics]
 
@@ -42,60 +43,16 @@ def fit_metrics_aggregation(metrics: List[Tuple[int, Metrics]]) -> Metrics:
     return {"accuracy": sum(accuracies) / sum(examples)}
 
 #Store the history
-def save_history(history, path=HISTORY_PATH):
-    # Extracting loss
-    rounds = []
-    loss_distributed = []
-    loss_centralized = []
+def save_history(history, path_text=HISTORY_PATH_TXT, path_pkl=HISTORY_PATH_PKL):
+    with open(path_pkl, "wb") as file:
+        pickle.dump(history, file)
 
-    for i, loss in enumerate(history.losses_distributed):
-        rounds.append(i + 1)
-        loss_distributed.append(loss)
-
-    for i, loss in enumerate(history.losses_centralized):
-        loss_centralized.append(loss)
-
-    # Extracting accuracy
-    accuracy_distributed = [acc for _, acc in history.metrics_distributed['accuracy']]
-    accuracy_centralized = [acc for _, acc in history.metrics_centralized['accuracy']]
-
-    # Creating DataFrame
-    df = pd.DataFrame({
-        'round': rounds,
-        'loss_distributed': loss_distributed,
-        'loss_centralized': loss_centralized,
-        'accuracy_distributed': accuracy_distributed,
-        'accuracy_centralized': accuracy_centralized
-    })
-     # Save to CSV
-    df.to_csv(path, index=False)
-
-
-#plotting metrics from saved file
-def plot_saved_history(path=HISTORY_PATH):
-    # Read the metrics from the CSV file
-    df = pd.read_csv(path)
-    # Plot Loss
-    plt.figure(figsize=(12, 6))
-    plt.plot(df['round'], df['loss_distributed'], label='Loss Distributed')
-    plt.plot(df['round'], df['loss_centralized'], label='Loss Centralized')
-    plt.xlabel('Round')
-    plt.ylabel('Loss')
-    plt.title('Loss over Rounds')
-    plt.legend()
-    plt.grid(True)
-    plt.show()
-
-    # Plot Accuracy
-    plt.figure(figsize=(12, 6))
-    plt.plot(df['round'], df['accuracy_distributed'], label='Accuracy Distributed')
-    plt.plot(df['round'], df['accuracy_centralized'], label='Accuracy Centralized')
-    plt.xlabel('Round')
-    plt.ylabel('Accuracy')
-    plt.title('Accuracy over Rounds')
-    plt.legend()
-    plt.grid(True)
-    plt.show()
+        # Save as a plain text file
+    with open(path_text, 'w') as file:
+        file.write(str(history))
+    print(f"history saved as text @ {path_text}")
+    print(f"history saved as picle @ {path_text}")
+    
 
 
 
@@ -112,8 +69,4 @@ if __name__ == "__main__":
         config=server_config,
         strategy=strategy,  # Use the imported strategy
     )
-    # Save as a plain text file
-    with open('history.txt', 'w') as file:
-        file.write(str(history))
-    #save_history(history)
-    #plot_saved_history()
+    save_history(history)

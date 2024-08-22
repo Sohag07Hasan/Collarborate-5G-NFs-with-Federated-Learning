@@ -49,18 +49,3 @@ So, in summary:
     evaluate_metrics_aggregation_fn provides a summary of the distributed evaluation metrics and has no impact on weight updates.
     evaluate_fn provides centralized evaluation metrics on a test/validation set and also does not affect weight updates.
 
->>> History Output for 2 rounds <<<
-
-History (loss, distributed):
-        round 1: 58.89218861224509
-        round 2: 4.695986254911972
-History (loss, centralized):
-        round 0: 5361.33695858717
-        round 1: 331.4346305915169
-        round 2: 14.861822886402791
-History (metrics, distributed, evaluate):
-{'accuracy': [(1, 0.9922463028186573), (2, 0.9999381353946617)]}
-History (metrics, centralized):
-{'accuracy': [(0, 0.6334332171146708),
-              (1, 0.9906931345297965),
-              (2, 0.9999678658076125)]}

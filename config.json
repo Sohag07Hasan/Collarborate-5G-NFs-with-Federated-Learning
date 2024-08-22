@@ -25,7 +25,8 @@
         "GLOBAL_MODEL_PATH": "./saved_models/global_model.pth",
         "TRAIN_DATASET_PATH": "./dataset/client_{0}/train/client_{0}_train.csv",
         "TEST_DATASET_PATH": "./dataset/client_{0}/test/client_{0}_test.csv",
-        "HISTORY_PATH": "./metrics/history.csv"
+        "HISTORY_PATH_TXT": "./metrics/history.txt",
+        "HISTORY_PATH_PKL": "./metrics/history.pkl"
     }
     
 }
