@@ -3,8 +3,6 @@ from config import FRACTION_FIT, FRACTION_EVAL, NUM_CLIENTS, MIN_FIT_CLIENTS, MI
 from typing import Callable
 
 
-
-
 def create_strategy(fit_config_fn: Callable, weighted_average_fn: Callable, evaluate_fn: Callable, fit_metrics_aggregation_fn: Callable):
     strategy = fl.server.strategy.FedAvg(
         fraction_fit = FRACTION_FIT,  # The fraction of clients used for training in each round

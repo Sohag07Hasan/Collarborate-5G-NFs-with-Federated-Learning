@@ -22,7 +22,7 @@
         
     },
     "dataset_path": {
-        "FOLD": 1,
+        "FOLD": 5,
         "TRAIN_DATASET_PATH": "./feature_engineering/dataset/client_{0}/fold_{1}/pca/client_{0}_pca_train_dataset.csv",
         "TEST_DATASET_PATH": "./feature_engineering/dataset/client_{0}/fold_{1}/pca/client_{0}_pca_test_dataset.csv"
 
@@ -32,6 +32,10 @@
         "HISTORY_PATH_TXT": "./results/history.txt",
         "HISTORY_PATH_PKL": "./results/history.pkl",
         "TRAINING_TIME": "./results/training_time.txt"
+    },
+    "early_stopping": {
+        "EARLY_STOPPING_ROUNDS": 3,
+        "IMPROVEMENT_THRESHOLD": 0.001
     }
     
 }
