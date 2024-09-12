@@ -1,13 +1,13 @@
 import flwr as fl
 from strategy import create_strategy  
-from dataloader import get_datasets, get_centralized_testset
-from config import LEARNING_RATE, EPOCHS, NUM_ROUNDS, SERVER_ADDRESS, NUM_ROUNDS, HISTORY_PATH_TXT, HISTORY_PATH_PKL
+from dataloader import get_centralized_testset
+from config import LEARNING_RATE, EPOCHS, NUM_ROUNDS, SERVER_ADDRESS, NUM_ROUNDS, HISTORY_PATH_TXT, HISTORY_PATH_PKL, TRAINING_TIME
 from flwr.common import Metrics, Scalar
 from utils import get_evaluate_fn, clear_cuda_cache
 from typing import Dict, List, Tuple
-import pandas as pd
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import pickle
+import time
 
 
 ## Collecting Datasets
@@ -53,13 +53,21 @@ def save_history(history, path_text=HISTORY_PATH_TXT, path_pkl=HISTORY_PATH_PKL)
     print(f"history saved as text @ {path_text}")
     print(f"history saved as picle @ {path_text}")
     
-
+#Store Training time 
+def save_training_time(start_time, end_time):
+    training_time = end_time - start_time
+           # Save as a plain text file
+    with open(TRAINING_TIME, 'w') as file:
+        file.write(str(training_time))
 
 
 if __name__ == "__main__":
     
     #clear the GPU cache
     clear_cuda_cache()
+
+    # Start timing
+    start_time = time.time()
 
     # Define the server configuration and start the server
     server_config = fl.server.ServerConfig(num_rounds=NUM_ROUNDS)
@@ -69,4 +77,7 @@ if __name__ == "__main__":
         config=server_config,
         strategy=strategy,  # Use the imported strategy
     )
+    # End timing
+    end_time = time.time()
+    save_training_time(start_time, end_time)
     save_history(history)

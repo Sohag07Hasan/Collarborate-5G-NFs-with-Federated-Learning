@@ -9,7 +9,7 @@ from torch.utils.data import DataLoader
 from config import SERVER_ADDRESS, NUM_CLASSES, BATCH_SIZE
 #from simulation import client_fn_callback
 from flwr_datasets import FederatedDataset
-from dataloader import get_datasets, apply_transforms
+#from dataloader import get_datasets, apply_transforms
 
 
 class FlowerClient(fl.client.NumPyClient):

@@ -67,7 +67,7 @@ def get_evaluate_fn(centralized_testset):
         # Save the model after the final round
         if server_round == NUM_ROUNDS:  #NUM_ROUNDS is defined globally
             torch.save(model.state_dict(), GLOBAL_MODEL_PATH)
-            print(f"Global model saved at round {server_round} to global_model.pth")
+            print(f"Global model saved at round {server_round}")
 
         # Apply transform to dataset
         #testset = centralized_testset.with_transform(apply_transforms)

@@ -2,7 +2,7 @@
     "training":{        
         "LEARNING_RATE": 0.01,
         "EPOCHS": 5,
-        "BATCH_SIZE": 32,
+        "BATCH_SIZE": 64,
         "MOMENTUM": 0.9,
         "NUM_FEATURES": 30,
         "NUM_CLASSES": 2
@@ -21,12 +21,17 @@
         "SERVER_ADDRESS": "0.0.0.0:8080"
         
     },
-    "saved_path":{
-        "GLOBAL_MODEL_PATH": "./saved_models/global_model.pth",
-        "TRAIN_DATASET_PATH": "./dataset/client_{0}/train/client_{0}_train.csv",
-        "TEST_DATASET_PATH": "./dataset/client_{0}/test/client_{0}_test.csv",
-        "HISTORY_PATH_TXT": "./metrics/history.txt",
-        "HISTORY_PATH_PKL": "./metrics/history.pkl"
+    "dataset_path": {
+        "FOLD": 1,
+        "TRAIN_DATASET_PATH": "./feature_engineering/dataset/client_{0}/fold_{1}/pca/client_{0}_pca_train_dataset.csv",
+        "TEST_DATASET_PATH": "./feature_engineering/dataset/client_{0}/fold_{1}/pca/client_{0}_pca_test_dataset.csv"
+
+    },
+    "results_path":{
+        "GLOBAL_MODEL_PATH": "./results/global_model.pth",
+        "HISTORY_PATH_TXT": "./results/history.txt",
+        "HISTORY_PATH_PKL": "./results/history.pkl",
+        "TRAINING_TIME": "./results/training_time.txt"
     }
     
 }

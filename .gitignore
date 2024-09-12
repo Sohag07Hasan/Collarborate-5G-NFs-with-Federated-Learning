@@ -17,9 +17,10 @@ venv.bak/
 backup/
 archive/
 dataset/
-models/
 row_data/
 scalers/
+results/
+logs/
 saved_models/
 feature_engineering/dataset/
 feature_engineering/*.csv

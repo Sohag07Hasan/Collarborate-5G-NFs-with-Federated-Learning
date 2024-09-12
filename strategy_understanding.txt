@@ -39,10 +39,10 @@ evaluate_metrics_aggregation_fn:
     Its sole purpose is to provide a summarized view of how well the model is performing on the distributed data after each round of training. This summary is typically shown in the logs or used for monitoring the training process.
 
 evaluate_fn:
-The evaluate_fn function is used to evaluate the global model on a centralized test dataset (if provided).
-Similar to evaluate_metrics_aggregation_fn, it does not affect the weight updates.
-The main purpose of evaluate_fn is to provide a centralized evaluation of the global model using a validation or test dataset that might not be distributed across the clients.
-This is useful for understanding how well the global model is performing on unseen data or a held-out validation set.
+    The evaluate_fn function is used to evaluate the global model on a centralized test dataset (if provided).
+    Similar to evaluate_metrics_aggregation_fn, it does not affect the weight updates.
+    The main purpose of evaluate_fn is to provide a centralized evaluation of the global model using a validation or test dataset that might not be distributed across the clients.
+    This is useful for understanding how well the global model is performing on unseen data or a held-out validation set.
 
 So, in summary:
     FedAvg averages weights across clients after each round and updates the global model.
