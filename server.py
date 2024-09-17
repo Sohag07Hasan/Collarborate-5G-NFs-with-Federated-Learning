@@ -3,7 +3,7 @@ from strategy import create_strategy
 from dataloader import get_centralized_testset
 from config import LEARNING_RATE, EPOCHS, NUM_ROUNDS, SERVER_ADDRESS, NUM_ROUNDS, HISTORY_PATH_TXT, HISTORY_PATH_PKL, TRAINING_TIME, EARLY_STOPPING_ROUNDS, IMPROVEMENT_THRESHOLD
 from flwr.common import Metrics, Scalar
-from utils import get_evaluate_fn, clear_cuda_cache
+from utils import get_evaluate_fn, clear_cuda_cache, prepare_file_path
 from typing import Dict, List, Tuple
 #import matplotlib.pyplot as plt
 import pickle
@@ -51,11 +51,11 @@ def fit_metrics_aggregation(metrics: List[Tuple[int, Metrics]]) -> Metrics:
 
 #Store the history
 def save_history(history, path_text=HISTORY_PATH_TXT, path_pkl=HISTORY_PATH_PKL):
-    with open(path_pkl, "wb") as file:
+    with open(prepare_file_path(path_pkl), "wb") as file:
         pickle.dump(history, file)
 
         # Save as a plain text file
-    with open(path_text, 'w') as file:
+    with open(prepare_file_path(path_text), 'w') as file:
         file.write(str(history))
     print(f"history saved as text @ {path_text}")
     print(f"history saved as picle @ {path_text}")
@@ -64,7 +64,7 @@ def save_history(history, path_text=HISTORY_PATH_TXT, path_pkl=HISTORY_PATH_PKL)
 def save_training_time(start_time, end_time):
     training_time = end_time - start_time
            # Save as a plain text file
-    with open(TRAINING_TIME, 'w') as file:
+    with open(prepare_file_path(TRAINING_TIME), 'w') as file:
         file.write(str(training_time))
 
 

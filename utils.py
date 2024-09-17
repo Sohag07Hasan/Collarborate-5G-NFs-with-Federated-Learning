@@ -4,11 +4,12 @@ We'll be training the model in a Federated setting. In order to do that, we need
 * `train()` that will train the model given a dataloader.
 * `test()` that will be used to evaluate the performance of the model on held-out data, e.g., a training set.
 '''
-from config import NUM_ROUNDS, GLOBAL_MODEL_PATH, NUM_CLASSES, BATCH_SIZE
+from config import NUM_ROUNDS, GLOBAL_MODEL_PATH, NUM_CLASSES, BATCH_SIZE, FOLDER_NAME, FOLD, NUM_FEATURES
 from model import Net
 import torch
 from collections import OrderedDict
 from torch.utils.data import DataLoader, TensorDataset
+import os
 
 
 def train(net, trainloader, optim, epochs, device: str):
@@ -66,7 +67,7 @@ def get_evaluate_fn(centralized_testset):
 
         # Save the model after the final round
         if server_round == NUM_ROUNDS:  #NUM_ROUNDS is defined globally
-            torch.save(model.state_dict(), GLOBAL_MODEL_PATH)
+            torch.save(model.state_dict(), prepare_file_path(GLOBAL_MODEL_PATH))
             print(f"Global model saved at round {server_round}")
 
         # Apply transform to dataset
@@ -96,3 +97,20 @@ def to_tensor(df):
     X_tensor = torch.tensor(X, dtype=torch.float32)
     y_tensor = torch.tensor(y, dtype=torch.long)
     return TensorDataset(X_tensor, y_tensor)
+
+
+## Prepare File Path from Features and Folds
+def prepare_file_path(path):
+    file_path = path.format(FOLDER_NAME.format(NUM_FEATURES, FOLD))
+    # Extract the directory path
+    directory = os.path.dirname(file_path)
+    # Check if the directory exists
+    if not os.path.exists(directory):
+        # If the directory does not exist, create it
+        os.makedirs(directory)
+    return file_path
+
+
+
+
+

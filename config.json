@@ -4,13 +4,13 @@
         "EPOCHS": 5,
         "BATCH_SIZE": 64,
         "MOMENTUM": 0.9,
-        "NUM_FEATURES": 30,
+        "NUM_FEATURES": 40,
         "NUM_CLASSES": 2
     },
 
     "strategy":{
         "NUM_CLIENTS": 4,
-        "NUM_ROUNDS": 20,
+        "NUM_ROUNDS": 2,
         "FRACTION_FIT": 1,
         "FRACTION_EVAL": 1,
         "MIN_FIT_CLIENTS": 4,
@@ -28,10 +28,11 @@
 
     },
     "results_path":{
-        "GLOBAL_MODEL_PATH": "./results/global_model.pth",
-        "HISTORY_PATH_TXT": "./results/history.txt",
-        "HISTORY_PATH_PKL": "./results/history.pkl",
-        "TRAINING_TIME": "./results/training_time.txt"
+        "FOLDER_NAME": "test_pca_{0}_fold{1}",
+        "GLOBAL_MODEL_PATH": "./results/{}/global_model.pth",
+        "HISTORY_PATH_TXT": "./results/{}/history.txt",
+        "HISTORY_PATH_PKL": "./results/{}/history.pkl",
+        "TRAINING_TIME": "./results/{}/training_time.txt"
     },
     "early_stopping": {
         "EARLY_STOPPING_ROUNDS": 3,

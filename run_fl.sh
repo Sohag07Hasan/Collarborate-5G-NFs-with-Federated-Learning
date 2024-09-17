@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 # Start the server and redirect its output to a log file
 echo "Starting the server..."
 START=$(date +%s)
