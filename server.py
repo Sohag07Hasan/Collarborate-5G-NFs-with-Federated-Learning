@@ -57,8 +57,8 @@ def save_history(history, path_text=HISTORY_PATH_TXT, path_pkl=HISTORY_PATH_PKL)
         # Save as a plain text file
     with open(prepare_file_path(path_text), 'w') as file:
         file.write(str(history))
-    print(f"history saved as text @ {path_text}")
-    print(f"history saved as picle @ {path_text}")
+    print(f"history saved as text @ {prepare_file_path(path_text)}")
+    print(f"history saved as picle @ {prepare_file_path(path_pkl)}")
     
 #Store Training time 
 def save_training_time(start_time, end_time):
