@@ -1,42 +1,37 @@
 {
-    "training":{        
-        "LEARNING_RATE": 0.01,
-        "EPOCHS": 5,
-        "BATCH_SIZE": 64,
-        "MOMENTUM": 0.9,
-        "NUM_FEATURES": 40,
-        "NUM_CLASSES": 2
-    },
-
-    "strategy":{
-        "NUM_CLIENTS": 4,
-        "NUM_ROUNDS": 2,
-        "FRACTION_FIT": 1,
-        "FRACTION_EVAL": 1,
-        "MIN_FIT_CLIENTS": 4,
-        "MIN_EVAL_CLIENTS": 4
-    },
-
-    "server":{
-        "SERVER_ADDRESS": "0.0.0.0:8080"
-        
-    },
-    "dataset_path": {
-        "FOLD": 5,
-        "TRAIN_DATASET_PATH": "./feature_engineering/dataset/client_{0}/fold_{1}/pca/client_{0}_pca_train_dataset.csv",
-        "TEST_DATASET_PATH": "./feature_engineering/dataset/client_{0}/fold_{1}/pca/client_{0}_pca_test_dataset.csv"
-
-    },
-    "results_path":{
-        "FOLDER_NAME": "test_pca_{0}_fold{1}",
-        "GLOBAL_MODEL_PATH": "./results/{}/global_model.pth",
-        "HISTORY_PATH_TXT": "./results/{}/history.txt",
-        "HISTORY_PATH_PKL": "./results/{}/history.pkl",
-        "TRAINING_TIME": "./results/{}/training_time.txt"
-    },
-    "early_stopping": {
-        "EARLY_STOPPING_ROUNDS": 3,
-        "IMPROVEMENT_THRESHOLD": 0.001
-    }
-    
+  "training": {
+    "LEARNING_RATE": 0.001,
+    "EPOCHS": 10,
+    "BATCH_SIZE": 256,
+    "MOMENTUM": 0.9,
+    "NUM_FEATURES": 40,
+    "NUM_CLASSES": 2
+  },
+  "strategy": {
+    "NUM_CLIENTS": 4,
+    "NUM_ROUNDS": 25,
+    "FRACTION_FIT": 1,
+    "FRACTION_EVAL": 1,
+    "MIN_FIT_CLIENTS": 4,
+    "MIN_EVAL_CLIENTS": 4
+  },
+  "server": {
+    "SERVER_ADDRESS": "0.0.0.0:8085"
+  },
+  "dataset_path": {
+    "FOLD": 5,
+    "TRAIN_DATASET_PATH": "./feature_engineering/dataset/client_{0}/fold_{1}/pca/client_{0}_pca_train_dataset.csv",
+    "TEST_DATASET_PATH": "./feature_engineering/dataset/client_{0}/fold_{1}/pca/client_{0}_pca_test_dataset.csv"
+  },
+  "results_path": {
+    "FOLDER_NAME": "pca_{0}_fold_{1}",
+    "GLOBAL_MODEL_PATH": "./results/{}/global_model.pth",
+    "HISTORY_PATH_TXT": "./results/{}/history.txt",
+    "HISTORY_PATH_PKL": "./results/{}/history.pkl",
+    "TRAINING_TIME": "./results/{}/training_time.txt"
+  },
+  "early_stopping": {
+    "EARLY_STOPPING_ROUNDS": 3,
+    "IMPROVEMENT_THRESHOLD": 0.001
+  }
 }

@@ -13,12 +13,15 @@ from flwr_datasets import FederatedDataset
 
 
 class FlowerClient(fl.client.NumPyClient):
-    def __init__(self, trainloader, valloader) -> None:
+    def __init__(self, trainloader, valloader, client_id) -> None:
         super().__init__()
 
         self.trainloader = trainloader
         self.valloader = valloader
         self.model = Net(num_classes=NUM_CLASSES)
+
+        self.client_id = client_id #savign client ID
+
         # Determine device
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         self.model.to(self.device)  # send model to device
@@ -47,6 +50,9 @@ class FlowerClient(fl.client.NumPyClient):
 
         # read from config
         lr, epochs = config["lr"], config["epochs"]
+        
+        #priting client info
+        #print(f"[Client {self.client_id}] fit, config: {config}") 
 
         # Define the optimizer
         optim = torch.optim.SGD(self.model.parameters(), lr=lr, momentum=0.9)
@@ -63,19 +69,25 @@ class FlowerClient(fl.client.NumPyClient):
 
         self.set_parameters(parameters)
         loss, accuracy = test(self.model, self.valloader, device=self.device)
+
+        ##Print the values
+        #print(f"[Client {self.client_id}] evaluate, config: {config}")
+        #print(f"[Client {self.client_id}] evaluate, loss:accuract = {loss}: {accuracy}")
+
         # send statistics back to the server
+      
         return float(loss), len(self.valloader), {"accuracy": accuracy}
 
 
 #Creates a lcient
-def create_client(training_set, validation_set, cid: int) -> fl.client.Client:
+def create_client(training_set, validation_set, client_id: int) -> fl.client.Client:
 
     # Now we apply the transform to each batch.
     trainloader = DataLoader(to_tensor(training_set), batch_size=BATCH_SIZE, shuffle=True)
     valloader = DataLoader(to_tensor(validation_set), batch_size=32)
     
     # Create and return client
-    return FlowerClient(trainloader, valloader).to_client()
+    return FlowerClient(trainloader, valloader, client_id).to_client()
 
 
 if __name__ =="__main__":

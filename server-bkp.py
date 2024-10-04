@@ -90,9 +90,6 @@ def early_stopping(history: List[Dict], round_num: int) -> bool:
         return True  # Stop the training process
     return False
 
-##function to run server
-def run_flower_server():
-    pass
 
 if __name__ == "__main__":
     
@@ -116,10 +113,5 @@ if __name__ == "__main__":
 
     save_training_time(start_time, end_time)
     save_history(history)
-
-     # Write "done" to a file when server finishes training
-    with open("server_done.txt", "w") as f:
-        f.write("done")
-
-    print("Server training complete and flag written.")
+    
 
