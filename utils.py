@@ -4,7 +4,7 @@ We'll be training the model in a Federated setting. In order to do that, we need
 * `train()` that will train the model given a dataloader.
 * `test()` that will be used to evaluate the performance of the model on held-out data, e.g., a training set.
 '''
-from config import NUM_ROUNDS, GLOBAL_MODEL_PATH, NUM_CLASSES, BATCH_SIZE, FOLDER_NAME, FOLD, NUM_FEATURES
+from config import NUM_ROUNDS, GLOBAL_MODEL_PATH, NUM_CLASSES, BATCH_SIZE, FOLDER_NAME, FOLD, NUM_FEATURES, FEATURE_TYPE
 from model import Net
 import torch
 from collections import OrderedDict
@@ -101,7 +101,7 @@ def to_tensor(df):
 
 ## Prepare File Path from Features and Folds
 def prepare_file_path(path):
-    file_path = path.format(FOLDER_NAME.format(NUM_FEATURES, FOLD))
+    file_path = path.format(FOLDER_NAME.format(FEATURE_TYPE, NUM_FEATURES, FOLD))
     # Extract the directory path
     directory = os.path.dirname(file_path)
     # Check if the directory exists

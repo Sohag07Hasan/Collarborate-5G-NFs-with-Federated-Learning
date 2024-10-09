@@ -22,6 +22,7 @@ scalers/
 results/
 logs/
 saved_models/
-feature_engineering/dataset/
-feature_engineering/dataset-bkp-20240926
-feature_engineering/*.csv
+**/*.csv
+**/*.log
+**/*.pkl
+**/*.pth
