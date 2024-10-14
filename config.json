@@ -1,13 +1,13 @@
 {
   "dataset_path": {
-    "FOLD": 5,
+    "FOLD": 4,
     "TRAIN_DATASET_PATH_PCA": "./feature_engineering/dataset/client_{0}/fold_{1}/pca/client_{0}_pca_train_dataset.csv",
     "TEST_DATASET_PATH_PCA": "./feature_engineering/dataset/client_{0}/fold_{1}/pca/client_{0}_pca_test_dataset.csv",
     "TRAIN_DATASET_PATH_ORIGINAL": "./feature_engineering/dataset/client_{0}/fold_{1}/client_{0}_scaled_train_dataset.csv",
     "TEST_DATASET_PATH_ORIGINAL": "./feature_engineering/dataset/client_{0}/fold_{1}/client_{0}_sclaed_test_dataset.csv"
   },
   "features": {
-    "NUM_FEATURES": 25,
+    "NUM_FEATURES": 17,
     "FEATURE_TYPE": "original",
     "PCA_FEATURES": [
       "PC1",
@@ -67,14 +67,6 @@
       "Active Min",
       "Bwd IAT Min",
       "Bwd IAT Std",
-      "Bwd Init Win Bytes",
-      "Active Std",
-      "Flow Duration",
-      "Fwd IAT Total",
-      "Flow IAT Max",
-      "Fwd IAT Min",
-      "Idle Max",
-      "Fwd Packet Length Max",
       "Label"
     ]
   },
@@ -101,7 +93,7 @@
     "MIN_EVAL_CLIENTS": 4
   },
   "server": {
-    "SERVER_ADDRESS": "0.0.0.0:8085"
+    "SERVER_ADDRESS": "0.0.0.0:8084"
   },
   "early_stopping": {
     "EARLY_STOPPING_ROUNDS": 3,
