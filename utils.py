@@ -10,6 +10,7 @@ import torch
 from collections import OrderedDict
 from torch.utils.data import DataLoader, TensorDataset
 import os
+import csv
 
 
 def train(net, trainloader, optim, epochs, device: str):
@@ -111,6 +112,57 @@ def prepare_file_path(path):
     return file_path
 
 
+## Saving all the metrics to CSV
+def save_metrics_to_csv(client_fit_metrics, client_eval_metrics, server_fit_metrics, server_eval_metrics, file_path):
+   # Initialize CSV headers and rows
+    headers = ["Client/Server", "Round", "Fit Accuracy", "Eval Accuracy"]
+    rows = []
 
+    # Process Client Fit and Eval Metrics
+    all_rounds = set(client_fit_metrics['accuracy'].keys()).union(client_eval_metrics['accuracy'].keys())
+    all_clients = set(client_id for round_data in client_fit_metrics['accuracy'].values() for client_id, _ in round_data)
+    all_clients.update(client_id for round_data in client_eval_metrics['accuracy'].values() for client_id, _ in round_data)
 
+    for round_num in sorted(all_rounds):
+        for client_id in sorted(all_clients):
+            fit_accuracy = next((acc for cid, acc in client_fit_metrics['accuracy'].get(round_num, []) if cid == client_id), None)
+            eval_accuracy = next((acc for cid, acc in client_eval_metrics['accuracy'].get(round_num, []) if cid == client_id), None)
+            if fit_accuracy is not None or eval_accuracy is not None:  # Only add if there's at least one metric
+                rows.append([f"Client {client_id}", round_num, fit_accuracy, eval_accuracy])
 
+    # Process Server Fit and Eval Metrics
+    for round_num in sorted(server_fit_metrics['accuracy']):
+        fit_accuracy = server_fit_metrics['accuracy'].get(round_num)
+        eval_accuracy = server_eval_metrics['accuracy'].get(round_num, None)
+        rows.append(["Server", round_num, fit_accuracy, eval_accuracy])
+    
+    # Write data to CSV
+    with open(prepare_file_path(file_path), mode="w", newline="") as file:
+        writer = csv.writer(file)
+        writer.writerow(headers)
+        writer.writerows(rows)
+
+    print(f" Metric Saved: {prepare_file_path(file_path)}")
+
+## Save the mode based on parameters
+def save_model(parameters, file_path = GLOBAL_MODEL_PATH, num_classes=NUM_CLASSES):
+    try:
+        model = Net(num_classes=num_classes)
+        # Determine device
+        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        model.to(device)  # send model to device
+
+        #  # Ensure `parameters` is an iterable and move it to CPU if necessary
+        # if isinstance(parameters, torch.Tensor):  # Single tensor case
+        #     parameters = parameters.cpu().tolist()  # Convert to a list after moving to CPU
+        # else:  # Iterable of tensors
+        #     parameters = [p.cpu().numpy() if p.is_cuda else p.numpy() for p in parameters]
+
+        
+        # set parameters to the model
+        params_dict = zip(model.state_dict().keys(), parameters)
+        state_dict = OrderedDict({k: torch.Tensor(v) for k, v in params_dict})
+        model.load_state_dict(state_dict, strict=True)
+        torch.save(model.state_dict(), prepare_file_path(file_path))
+    except Exception as e:
+        print(f"Saving model error: {e}")

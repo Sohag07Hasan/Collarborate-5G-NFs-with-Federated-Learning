@@ -1,6 +1,6 @@
 {
   "dataset_path": {
-    "FOLD": 1,
+    "FOLD": 5,
     "TRAIN_DATASET_PATH_PCA": "./feature_engineering/dataset/client_{0}/fold_{1}/pca/client_{0}_pca_train_dataset.csv",
     "TEST_DATASET_PATH_PCA": "./feature_engineering/dataset/client_{0}/fold_{1}/pca/client_{0}_pca_test_dataset.csv",
     "TRAIN_DATASET_PATH_ORIGINAL": "./feature_engineering/dataset/client_{0}/fold_{1}/client_{0}_scaled_train_dataset.csv",
@@ -47,9 +47,11 @@
   "results_path": {
     "FOLDER_NAME": "{0}_{1}_fold_{2}",
     "GLOBAL_MODEL_PATH": "./results/{}/global_model.pth",
+    "BEST_GLOBAL_MODEL_PATH": "./results/{}/best_global_model.pth",
     "HISTORY_PATH_TXT": "./results/{}/history.txt",
     "HISTORY_PATH_PKL": "./results/{}/history.pkl",
-    "TRAINING_TIME": "./results/{}/training_time.txt"
+    "TRAINING_TIME": "./results/{}/training_time.txt",
+    "METRIC_PATH": "./results/{}/metrics.csv"
   },
   "strategy": {
     "NUM_CLIENTS": 4,
@@ -60,7 +62,7 @@
     "MIN_EVAL_CLIENTS": 4
   },
   "server": {
-    "SERVER_ADDRESS": "0.0.0.0:8081"
+    "SERVER_ADDRESS": "0.0.0.0:8085"
   },
   "early_stopping": {
     "EARLY_STOPPING_ROUNDS": 3,

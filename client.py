@@ -19,7 +19,6 @@ class FlowerClient(fl.client.NumPyClient):
         self.trainloader = trainloader
         self.valloader = valloader
         self.model = Net(num_classes=NUM_CLASSES)
-
         self.client_id = client_id #savign client ID
 
         # Determine device

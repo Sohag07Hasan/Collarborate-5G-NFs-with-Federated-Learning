@@ -3,11 +3,11 @@ from typing import Dict, List, Tuple, Callable, Optional, Union
 from logging import WARNING
 
 ##configuration
-from config import NUM_ROUNDS, BATCH_SIZE, GLOBAL_MODEL_PATH, NUM_CLASSES
+from config import NUM_ROUNDS, BATCH_SIZE, GLOBAL_MODEL_PATH, NUM_CLASSES, METRIC_PATH, BEST_GLOBAL_MODEL_PATH
 from dataloader import get_centralized_testset
 from torch.utils.data import DataLoader, TensorDataset
 from model import Net
-from utils import to_tensor, test, prepare_file_path
+from utils import to_tensor, test, prepare_file_path, save_metrics_to_csv, save_model
 import torch
 import numpy as np
 from collections import OrderedDict
@@ -130,24 +130,37 @@ class CustomFedAvgEarlyStop(FedAvg):
 
         # Step 2 Clients that are not generating good accuracy we will give their weights high priority
         # So we invese the weighted accuracy for that
-        total_examples = sum(num_examples)
-        print(f'Round: {server_round}; Total_examples: {total_examples}')
-        weighted_avg = [(accuracies[i] * num_examples[i]) / total_examples for i in range(len(accuracies))]
-        inverse_weighted_avg = [1 / value for value in weighted_avg]
+        # total_examples = sum(num_examples)
+        # print(f'Round: {server_round}; Total_examples: {total_examples}')
+        # weighted_avg = [(accuracies[i] * num_examples[i]) / total_examples for i in range(len(accuracies))]
+        # inverse_weighted_avg = [1 / value for value in weighted_avg]
+        # print(inverse_weighted_avg)
         #total_inverse_weighted_avg = sum(inverse_weighted_avg)
         #new_weights = [value / total_inverse_weighted_avg for value in inverse_weighted_avg]
 
-       # Step 3: Integrate new weights in weights
-        weights_results = [
-            (parameters_to_ndarrays(fit_res.parameters), fit_res.num_examples)
-            for _, fit_res in results
-        ]
-        aggregated_ndarrays = aggregate(weights_results)    
-        #aggregated_ndarrays = self.aggregate(list(zip( aggregated_ndarrays, inverse_weighted_avg)))
-        parameters_aggregated = ndarrays_to_parameters(aggregated_ndarrays)
+        inverse_accuracies = [1 / value for value in accuracies] #Inversing to give priority to the low performing clients
 
+       # Step 3: Integrate new weights in weights
+        # weights_results = [
+        #     (parameters_to_ndarrays(fit_res.parameters), fit_res.num_examples)
+        #     for _, fit_res in results
+        # ]
+
+        weights = [parameters_to_ndarrays(fit_res.parameters) for _, fit_res in results]
+        # Ensure all weights are on CPU as numpy arrays for aggregation
+        # weights = [[tensor.cpu().numpy() if isinstance(tensor, torch.Tensor) else tensor for tensor in layer] for layer in weights]
+        weighted_num_examples = np.multiply(num_examples, inverse_accuracies).tolist()
+
+        aggregated_ndarrays = self.original_aggregate(list(zip(weights,  weighted_num_examples)))
+        # print(f'Lenght of original: {len(aggregated_ndarrays)}')    
+        # weighted_aggregated_ndarrays = self.aggregate(list(zip( aggregated_ndarrays, inverse_weighted_avg)))
+        # print(f'Lenght of weighted: {len(weighted_aggregated_ndarrays)}')
+        
         ## store the global model for each rounds
-        self.global_models[server_round] = parameters_aggregated
+        self.global_models[server_round] = aggregated_ndarrays
+
+        #converting back to parameters
+        parameters_aggregated = ndarrays_to_parameters(aggregated_ndarrays)
 
         # Aggregate custom metrics if an aggregation function is provided
         metrics_aggregated = {}
@@ -167,7 +180,7 @@ class CustomFedAvgEarlyStop(FedAvg):
 
     ## aggregate weights based on accuracy (new weights)
     # Original aggregate only works with integer. Now it will work for float as well
-    def aggregate(self, results: list[tuple[np.ndarray, float]]) -> list[np.ndarray]:
+    def original_aggregate(self, results: list[tuple[np.ndarray, float]]) -> list[np.ndarray]:
         """Compute weighted average."""
         # Calculate the total number of examples (now allowing floats)
         num_examples_total = sum(num_examples for (_, num_examples) in results)
@@ -183,6 +196,25 @@ class CustomFedAvgEarlyStop(FedAvg):
             for layer_updates in zip(*weighted_weights)
         ]
         return weights_prime
+    
+
+    def aggregate(self, results: list[tuple[np.ndarray, float]]) -> list[np.ndarray]:
+        """Compute weighted average of model weights from multiple clients."""
+        # Calculate the total number of examples (as floats for accuracy)
+        num_examples_total = sum(num_examples for _, num_examples in results)
+
+        # Initialize weighted sum for each layer with zeros based on shape of first client weights
+        weighted_sum = [np.zeros_like(layer) for layer in results[0][0]]
+
+        # Compute weighted sum for each layer
+        for weights, num_examples in results:
+            for i, layer in enumerate(weights):
+                weighted_sum[i] += layer * num_examples
+
+        # Calculate the weighted average by dividing by the total number of examples
+        weights_prime = [layer / num_examples_total for layer in weighted_sum]
+        return weights_prime
+
 
     def should_continue_training(self) -> bool:
         """Check if training should continue."""
@@ -271,25 +303,18 @@ class CustomFedAvgEarlyStop(FedAvg):
         return loss_aggregated, metrics_aggregated
 
 
-
     #Save info
     def save_all_data(self):
-        # self.client_fit_metrics = {'accuracy': {}, 'loss': {}}  # Track evaluation metrics per client
-        # self.client_eva_metrics = {'accuracy': {}, 'loss': {}}  # Track evaluation metrics per client
-        # self.server_fit_metrics = {'accuracy': {}, 'loss': {}}  # Track evaluation metrics for server
-        # self.server_eva_metrics = {'accuracy': {}, 'loss': {}}  # Track evaluation metrics for server
-        # self.global_models = {} ##Store global model parameters
-        print("client fit metrics")
-        print(self.client_fit_metrics)
 
-        print("client eval metrics")
-        print(self.client_eval_metrics)
+        #Save the last model
+        save_model(self.global_models.get(self.current_round), file_path=GLOBAL_MODEL_PATH)
 
-        print("server fit metrics")
-        print(self.server_fit_metrics)
+        ## Save the best model
+        highest_accuracy_round = max(self.server_eval_metrics['accuracy'], key=self.server_eval_metrics['accuracy'].get)
+        save_model(self.global_models.get(highest_accuracy_round), file_path=BEST_GLOBAL_MODEL_PATH)
 
-        print("server eval metrics")
-        print(self.server_eval_metrics)
+        #Save the metrics
+        save_metrics_to_csv(self.client_fit_metrics, self.client_eval_metrics, self.server_fit_metrics, self.server_eval_metrics, METRIC_PATH)
 
 
 
@@ -341,10 +366,10 @@ def evaluate_fn(server_round: int, parameters, config):
     state_dict = OrderedDict({k: torch.Tensor(v) for k, v in params_dict})
     model.load_state_dict(state_dict, strict=True)
 
-    # Save the model after the final round
-    if server_round == NUM_ROUNDS:  #NUM_ROUNDS is defined globally
-        torch.save(model.state_dict(), prepare_file_path(GLOBAL_MODEL_PATH))
-        print(f"Global model saved at round {server_round}")
+    # # Save the model after the final round
+    # if server_round == NUM_ROUNDS:  #NUM_ROUNDS is defined globally
+    #     torch.save(model.state_dict(), prepare_file_path(GLOBAL_MODEL_PATH))
+    #     print(f"Global model saved at round {server_round}")
 
     # collecting central testset
     centralized_testset = get_centralized_testset()
@@ -353,6 +378,10 @@ def evaluate_fn(server_round: int, parameters, config):
     # call test
     loss, accuracy = test(model, testloader, device)
     return loss, {"accuracy": accuracy}
+
+
+
+
 
 
 

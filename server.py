@@ -1,7 +1,7 @@
 import flwr as fl
 #from strategy import create_strategy  
 from dataloader import get_centralized_testset
-from config import LEARNING_RATE, EPOCHS, NUM_ROUNDS, SERVER_ADDRESS, NUM_ROUNDS, HISTORY_PATH_TXT, HISTORY_PATH_PKL, TRAINING_TIME, EARLY_STOPPING_ROUNDS, IMPROVEMENT_THRESHOLD
+from config import LEARNING_RATE, EPOCHS, NUM_ROUNDS, SERVER_ADDRESS, NUM_ROUNDS, HISTORY_PATH_TXT, HISTORY_PATH_PKL, TRAINING_TIME, EARLY_STOPPING_ROUNDS, IMPROVEMENT_THRESHOLD, NUM_CLIENTS, FRACTION_FIT, FRACTION_EVAL, MIN_FIT_CLIENTS, MIN_EVAL_CLIENTS
 from flwr.common import Metrics, Scalar
 from utils import get_evaluate_fn, clear_cuda_cache, prepare_file_path
 from typing import Dict, List, Tuple
@@ -32,18 +32,6 @@ def fit_config(server_round: int) -> Dict[str, Scalar]:
     }
     return config
 
-# def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
-#     """Aggregation function for (federated) evaluation metrics, i.e. those returned by
-#     the client's evaluate() method."""
-#     # Multiply accuracy of each client by number of examples used
-#     accuracies = [num_examples * m["accuracy"] for num_examples, m in metrics]
-#     examples = [num_examples for num_examples, _ in metrics]
-
-#     # Aggregate and return custom metric (weighted average)
-#     return {"accuracy": sum(accuracies) / sum(examples)}
-
-
-
 
 #Store the history
 def save_history(history, path_text=HISTORY_PATH_TXT, path_pkl=HISTORY_PATH_PKL):
@@ -66,17 +54,32 @@ def save_training_time(start_time, end_time):
 
 # Early stopping function
 strategy = CustomFedAvgEarlyStop(
-    initial_lr=0.1,
-    initial_epochs=5,
-    lr_adjustment_factor=0.1,
-    min_lr=0.1,
-    improvement_threshold=0.01,
-    max_rounds=NUM_ROUNDS,
-    ff=0.5, #fraction_fit
-    fe=0.5, #fraction_evaluate
-    mfc=2, # min_fit_clients
-    mec=2, #min_evaluate_clients
-    mac=2, #min_available_clients
+    ##Testing params
+    # initial_lr = 0.1, #LEARNING_RATE,
+    # initial_epochs = 2, #EPOCHS,
+    # lr_adjustment_factor = 0.1,
+    # min_lr = 0.1,
+    # improvement_threshold = 0.01,
+    # max_rounds = 2, #NUM_ROUNDS,
+    # ff = 0.5, #FRACTION_FIT, #fraction_fit
+    # fe = 0.5, #FRACTION_EVAL, #fraction_evaluate
+    # mfc = 2, #MIN_FIT_CLIENTS, # min_fit_clients
+    # mec = 2, #MIN_EVAL_CLIENTS, #min_evaluate_clients
+    # mac = 2 #NUM_CLIENTS, #min_available_clients
+
+    # ##Actual params
+    initial_lr = LEARNING_RATE,
+    initial_epochs = EPOCHS,
+    lr_adjustment_factor = 0.1,
+    min_lr = 0.1,
+    improvement_threshold = 0.01,
+    max_rounds = NUM_ROUNDS,
+    ff = FRACTION_FIT, #fraction_fit
+    fe = FRACTION_EVAL, #fraction_evaluate
+    mfc = MIN_FIT_CLIENTS, # min_fit_clients
+    mec = MIN_EVAL_CLIENTS, #min_evaluate_clients
+    mac = NUM_CLIENTS, #min_available_clients
+
 
 )
 
