@@ -50,9 +50,6 @@ class FlowerClient(fl.client.NumPyClient):
 
         # read from config
         lr, epochs = config["lr"], config["epochs"]
-        
-        #priting client info
-        #print(f"[Client {self.client_id}] fit, config: {config}") 
 
         # Define the optimizer
         optim = torch.optim.SGD(self.model.parameters(), lr=lr, momentum=0.9)
@@ -60,8 +57,11 @@ class FlowerClient(fl.client.NumPyClient):
         # do local training
         train(self.model, self.trainloader, optim, epochs=epochs, device=self.device)
 
+        # planning to return the evaluation metrics with weights to make it weighted
+        loss, accuracy = test(self.model, self.valloader, device=self.device)
+
         # return the model parameters to the server as well as extra info (number of training examples in this case)
-        return self.get_parameters({}), len(self.trainloader), {}
+        return self.get_parameters({}), len(self.trainloader), {"accuracy": accuracy, "loss": float(loss), "num_example": len(self.valloader), "client_id":self.client_id}
 
     def evaluate(self, parameters: NDArrays, config: Dict[str, Scalar]):
         """Evaluate the model sent by the server on this client's
@@ -70,13 +70,8 @@ class FlowerClient(fl.client.NumPyClient):
         self.set_parameters(parameters)
         loss, accuracy = test(self.model, self.valloader, device=self.device)
 
-        ##Print the values
-        #print(f"[Client {self.client_id}] evaluate, config: {config}")
-        #print(f"[Client {self.client_id}] evaluate, loss:accuract = {loss}: {accuracy}")
-
-        # send statistics back to the server
-      
-        return float(loss), len(self.valloader), {"accuracy": accuracy}
+        # send statistics back to the server      
+        return float(loss), len(self.valloader), {"accuracy": accuracy, "loss": float(loss), "client_id":self.client_id }
 
 
 #Creates a lcient

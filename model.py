@@ -26,7 +26,7 @@ from config import NUM_FEATURES, NUM_CLASSES
 #         return x
     
 
-#input is 40
+#input is 40, 41
 
 # class Net(nn.Module):
 #     def __init__(self, num_classes: int) -> None:
@@ -115,6 +115,143 @@ from config import NUM_FEATURES, NUM_CLASSES
 #         x = self.fc3(x)
 #         return x
 
+
+# # 29 features
+# class Net(nn.Module):
+#     def __init__(self, input_size: int = 29, num_classes: int = 2) -> None:
+#         super(Net, self).__init__()
+#         self.conv1 = nn.Conv1d(in_channels=1, out_channels=6, kernel_size=5)  # 1D Convolution
+#         self.pool = nn.MaxPool1d(kernel_size=2)
+#         self.conv2 = nn.Conv1d(in_channels=6, out_channels=16, kernel_size=5)  # 1D Convolution
+        
+#         # Dynamically calculate the size after convolutions and pooling
+#         # For input_size = 29:
+#         # conv1 reduces input to (input_size - kernel_size + 1)
+#         # pool1 reduces to half
+#         # conv2 further reduces the size
+#         conv1_output_size = input_size - 5 + 1  # After first conv layer
+#         pooled1_size = conv1_output_size // 2   # After first pooling layer
+#         conv2_output_size = pooled1_size - 5 + 1  # After second conv layer
+#         pooled2_size = conv2_output_size // 2    # After second pooling layer
+        
+#         # Fully connected layer based on dynamic input size
+#         self.fc1 = nn.Linear(16 * pooled2_size, 120)  # Dynamically set the size
+#         self.fc2 = nn.Linear(120, 84)
+#         self.fc3 = nn.Linear(84, num_classes)  # Output size remains fixed
+
+#     def forward(self, x: torch.Tensor) -> torch.Tensor:
+#         x = x.unsqueeze(1)  # Add a channel dimension: (batch_size, 1, input_size)
+#         x = self.pool(F.relu(self.conv1(x)))  # First conv + pool
+#         x = self.pool(F.relu(self.conv2(x)))  # Second conv + pool
+#         x = x.view(x.size(0), -1)  # Flatten the tensor for the fully connected layers
+#         x = F.relu(self.fc1(x))
+#         x = F.relu(self.fc2(x))
+#         x = self.fc3(x)
+#         return x
+
+
+## 28 Features
+# class Net(nn.Module):
+#     def __init__(self, input_size: int = NUM_FEATURES, num_classes: int = NUM_CLASSES) -> None:
+#         super(Net, self).__init__()
+#         self.conv1 = nn.Conv1d(in_channels=1, out_channels=6, kernel_size=5)  # 1D Convolution
+#         self.pool = nn.MaxPool1d(kernel_size=2)
+#         self.conv2 = nn.Conv1d(in_channels=6, out_channels=16, kernel_size=5)  # 1D Convolution
+        
+#         # Dynamically calculate the size after convolutions and pooling
+#         # For input size 28:
+#         # conv1 reduces input to (28 - 5 + 1) = 24
+#         # pool1 reduces to half: 24 // 2 = 12
+#         # conv2 further reduces to (12 - 5 + 1) = 8
+#         # pool2 reduces to half: 8 // 2 = 4
+#         conv1_output_size = input_size - 5 + 1  # After first conv layer
+#         pooled1_size = conv1_output_size // 2   # After first pooling layer
+#         conv2_output_size = pooled1_size - 5 + 1  # After second conv layer
+#         pooled2_size = conv2_output_size // 2    # After second pooling layer
+        
+#         # Fully connected layer based on dynamic input size
+#         self.fc1 = nn.Linear(16 * pooled2_size, 120)  # Adjusted size for 28 input features
+#         self.fc2 = nn.Linear(120, 84)
+#         self.fc3 = nn.Linear(84, num_classes)  # Output size remains fixed for binary classification
+
+#     def forward(self, x: torch.Tensor) -> torch.Tensor:
+#         x = x.unsqueeze(1)  # Add a channel dimension: (batch_size, 1, input_size)
+#         x = self.pool(F.relu(self.conv1(x)))  # First conv + pool
+#         x = self.pool(F.relu(self.conv2(x)))  # Second conv + pool
+#         x = x.view(x.size(0), -1)  # Flatten the tensor for the fully connected layers
+#         x = F.relu(self.fc1(x))
+#         x = F.relu(self.fc2(x))
+#         x = self.fc3(x)
+#         return x
+
+# ## 26 features
+# class Net(nn.Module):
+#     def __init__(self, input_size: int = 26, num_classes: int = 2) -> None:
+#         super(Net, self).__init__()
+#         self.conv1 = nn.Conv1d(in_channels=1, out_channels=6, kernel_size=5)  # 1D Convolution
+#         self.pool = nn.MaxPool1d(kernel_size=2)
+#         self.conv2 = nn.Conv1d(in_channels=6, out_channels=16, kernel_size=5)  # 1D Convolution
+        
+#         # Dynamically calculate the size after convolutions and pooling
+#         # For input size 26:
+#         # conv1 reduces input to (26 - 5 + 1) = 22
+#         # pool1 reduces to half: 22 // 2 = 11
+#         # conv2 further reduces to (11 - 5 + 1) = 7
+#         # pool2 reduces to half: 7 // 2 = 3
+#         conv1_output_size = input_size - 5 + 1  # After first conv layer
+#         pooled1_size = conv1_output_size // 2   # After first pooling layer
+#         conv2_output_size = pooled1_size - 5 + 1  # After second conv layer
+#         pooled2_size = conv2_output_size // 2    # After second pooling layer
+        
+#         # Fully connected layer based on dynamic input size
+#         self.fc1 = nn.Linear(16 * pooled2_size, 120)  # Adjusted size for 26 input features
+#         self.fc2 = nn.Linear(120, 84)
+#         self.fc3 = nn.Linear(84, num_classes)  # Output size remains fixed for binary classification
+
+#     def forward(self, x: torch.Tensor) -> torch.Tensor:
+#         x = x.unsqueeze(1)  # Add a channel dimension: (batch_size, 1, input_size)
+#         x = self.pool(F.relu(self.conv1(x)))  # First conv + pool
+#         x = self.pool(F.relu(self.conv2(x)))  # Second conv + pool
+#         x = x.view(x.size(0), -1)  # Flatten the tensor for the fully connected layers
+#         x = F.relu(self.fc1(x))
+#         x = F.relu(self.fc2(x))
+#         x = self.fc3(x)
+#         return x
+
+
+# ## 27 features
+# class Net(nn.Module):
+#     def __init__(self, input_size: int = 27, num_classes: int = 2) -> None:
+#         super(Net, self).__init__()
+#         self.conv1 = nn.Conv1d(in_channels=1, out_channels=6, kernel_size=5)  # 1D Convolution
+#         self.pool = nn.MaxPool1d(kernel_size=2)
+#         self.conv2 = nn.Conv1d(in_channels=6, out_channels=16, kernel_size=5)  # 1D Convolution
+        
+#         # Dynamically calculate the size after convolutions and pooling
+#         # For input size 27:
+#         # conv1 reduces input to (27 - 5 + 1) = 23
+#         # pool1 reduces to half: 23 // 2 = 11
+#         # conv2 further reduces to (11 - 5 + 1) = 7
+#         # pool2 reduces to half: 7 // 2 = 3
+#         conv1_output_size = input_size - 5 + 1  # After first conv layer
+#         pooled1_size = conv1_output_size // 2   # After first pooling layer
+#         conv2_output_size = pooled1_size - 5 + 1  # After second conv layer
+#         pooled2_size = conv2_output_size // 2    # After second pooling layer
+        
+#         # Fully connected layer based on dynamic input size
+#         self.fc1 = nn.Linear(16 * pooled2_size, 120)  # Size remains 16 * 3 for 27 features
+#         self.fc2 = nn.Linear(120, 84)
+#         self.fc3 = nn.Linear(84, num_classes)  # Output size remains fixed for binary classification
+
+#     def forward(self, x: torch.Tensor) -> torch.Tensor:
+#         x = x.unsqueeze(1)  # Add a channel dimension: (batch_size, 1, input_size)
+#         x = self.pool(F.relu(self.conv1(x)))  # First conv + pool
+#         x = self.pool(F.relu(self.conv2(x)))  # Second conv + pool
+#         x = x.view(x.size(0), -1)  # Flatten the tensor for the fully connected layers
+#         x = F.relu(self.fc1(x))
+#         x = F.relu(self.fc2(x))
+#         x = self.fc3(x)
+#         return x
 
 # ## For Small features like 8
 # class Net(nn.Module):

@@ -56,7 +56,7 @@ do
   while [ ! -f server_done.txt ]
   do
     echo "Server is still running..."
-    sleep 60  # Check every 120 seconds
+    sleep 120  # Check every 120 seconds
   done
 
   echo "Server process for fold $FOLD has finished."

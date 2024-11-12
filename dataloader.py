@@ -41,6 +41,7 @@ def get_evaluation_datasets_by_client(client_id, fold=FOLD):
         features = ORIGINAL_FEATURES.copy()
 
     testing_dataset = load_dataset(test_file_path)
+    #print(len(features))
     return testing_dataset[features]
 
 ## combine testset from all the clients
@@ -50,9 +51,9 @@ def get_centralized_testset():
     client_2_testset = get_evaluation_datasets_by_client(2)
     client_3_testset = get_evaluation_datasets_by_client(3)
     client_4_testset = get_evaluation_datasets_by_client(4)
-    print(client_1_testset.shape)
-    print(client_2_testset.shape)
-    print(client_3_testset.shape)
-    print(client_4_testset.shape)
+    # print(client_1_testset.shape)
+    # print(client_2_testset.shape)
+    # print(client_3_testset.shape)
+    # print(client_4_testset.shape)
     centralized_testset = pd.concat([client_1_testset, client_2_testset, client_3_testset, client_4_testset], axis=0)
     return centralized_testset.sample(frac=1).reset_index(drop=True)

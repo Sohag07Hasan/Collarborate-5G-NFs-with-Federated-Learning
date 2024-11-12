@@ -1,0 +1,150 @@
+Round 1:
+Client ID: 3aa54277386344d5a90abcce9e924c8f, Config: {'lr': 0.01, 'epochs': 1}
+Round 2:
+Client ID: 0a2247cf08eb4de7b9cc62313c6d9b64, Config: {'lr': 0.01, 'epochs': 1}
+Round 3:
+Client ID: fd2274100add40199c34b6063f87adad, Config: {'lr': 0.01, 'epochs': 1}
+Round 4:
+Client ID: 0a2247cf08eb4de7b9cc62313c6d9b64, Config: {'lr': 0.01, 'epochs': 1}
+Round 5:
+Client ID: 3aa54277386344d5a90abcce9e924c8f, Config: {'lr': 0.01, 'epochs': 1}
+Round 1:
+Client ID: 25accf5d8fee43c593a3c9216cf43586, Config: {'lr': 0.01, 'epochs': 1}
+Round 2:
+Client ID: 35bdd3e1b2574e989360367aead18105, Config: {'lr': 0.01, 'epochs': 1}
+Round 3:
+Client ID: 73a2aeeb638c4fa093bb3996c14fa3ba, Config: {'lr': 0.01, 'epochs': 1}
+Round 4:
+Client ID: 73a2aeeb638c4fa093bb3996c14fa3ba, Config: {'lr': 0.01, 'epochs': 1}
+Round 5:
+Client ID: 73a2aeeb638c4fa093bb3996c14fa3ba, Config: {'lr': 0.01, 'epochs': 1}
+Round 1:
+Client ID: 42cb2f4fd9314569a903b5bd23c3ceb2, Config: {'lr': 0.01, 'epochs': 1}
+Round 2:
+Client ID: 2873145e4aab45a8a9c78c6775a6c929, Config: {'lr': 0.01, 'epochs': 1}
+Round 3:
+Client ID: 2873145e4aab45a8a9c78c6775a6c929, Config: {'lr': 0.01, 'epochs': 1}
+Round 4:
+Client ID: 2873145e4aab45a8a9c78c6775a6c929, Config: {'lr': 0.01, 'epochs': 1}
+Round 5:
+Client ID: 42cb2f4fd9314569a903b5bd23c3ceb2, Config: {'lr': 0.01, 'epochs': 1}
+Round 1:
+Client ID: 3f4160df20614b7a931c3a903d6f9fd4, Config: {'lr': 0.01, 'epochs': 1}
+Round 2:
+Client ID: e723bb218efe4bc1a9eb34ff39e4d5df, Config: {'lr': 0.01, 'epochs': 1}
+Round 3:
+Client ID: 4a526bc39f504d92b3bc041bfc7ac2a3, Config: {'lr': 0.01, 'epochs': 1}
+Round 4:
+Client ID: 4a526bc39f504d92b3bc041bfc7ac2a3, Config: {'lr': 0.01, 'epochs': 1}
+Round 5:
+Client ID: 3f4160df20614b7a931c3a903d6f9fd4, Config: {'lr': 0.01, 'epochs': 1}
+Round 1:
+Client ID: 9a1b7006309b4d3c9afa8cad1081cbbf, Config: {'lr': 0.01, 'epochs': 1}
+Round 2:
+Client ID: a4e7608a210e4a959b79cf51fcbc6968, Config: {'lr': 0.01, 'epochs': 1}
+Round 3:
+Client ID: a4e7608a210e4a959b79cf51fcbc6968, Config: {'lr': 0.01, 'epochs': 1}
+Round 4:
+Client ID: 9721a771cc5349e9bb351a253a2572b1, Config: {'lr': 0.01, 'epochs': 1}
+Round 5:
+Client ID: 9a1b7006309b4d3c9afa8cad1081cbbf, Config: {'lr': 0.01, 'epochs': 1}
+Round 1:
+Client ID: d1c183e6738443aca916b9459db9d4aa, Config: {'lr': 0.01, 'epochs': 1}
+Round 2:
+Client ID: d1c183e6738443aca916b9459db9d4aa, Config: {'lr': 0.01, 'epochs': 1}
+Round 3:
+Client ID: c3312071966548cea58df719e1d5d23d, Config: {'lr': 0.01, 'epochs': 1}
+Round 4:
+Client ID: d1c183e6738443aca916b9459db9d4aa, Config: {'lr': 0.01, 'epochs': 1}
+Round 5:
+Client ID: 0a30857671ea4d738564a0d2e871c230, Config: {'lr': 0.01, 'epochs': 1}
+Round 1:
+Client ID: 35e5a60ec12942caa41348fa457051ef, Config: {'lr': 0.01, 'epochs': 1}
+Round 2:
+Client ID: bde2dd6ec388442c90ed404efc72ba30, Config: {'lr': 0.01, 'epochs': 1}
+Round 3:
+Client ID: 19f1026e521f401fa24ad7ba4f87efac, Config: {'lr': 0.01, 'epochs': 1}
+Round 4:
+Client ID: 35e5a60ec12942caa41348fa457051ef, Config: {'lr': 0.01, 'epochs': 1}
+Round 5:
+Client ID: 19f1026e521f401fa24ad7ba4f87efac, Config: {'lr': 0.01, 'epochs': 1}
+Round 1:
+Client ID: b5f67354f7894ae693435241c6ca1b9c, Config: {'lr': 0.01, 'epochs': 1}
+Round 2:
+Client ID: fc55aef8ae2947459c90ed4df3dac289, Config: {'lr': 0.01, 'epochs': 1}
+Round 3:
+Client ID: b5f67354f7894ae693435241c6ca1b9c, Config: {'lr': 0.01, 'epochs': 1}
+Round 4:
+Client ID: efac3de70118460d92bf96098e01698b, Config: {'lr': 0.01, 'epochs': 1}
+Round 5:
+Client ID: 5a5bb4fdce6e43f4bc34a37f08478fcb, Config: {'lr': 0.01, 'epochs': 1}
+Round 1:
+Client ID: f47976b623ca43f2b42a90fee90674cd, Config: {'lr': 0.01, 'epochs': 1}
+Round 2:
+Client ID: cb0ac278486e40e888e3102200792797, Config: {'lr': 0.01, 'epochs': 1}
+Round 3:
+Client ID: cb0ac278486e40e888e3102200792797, Config: {'lr': 0.01, 'epochs': 1}
+Round 4:
+Client ID: cb0ac278486e40e888e3102200792797, Config: {'lr': 0.01, 'epochs': 1}
+Round 5:
+Client ID: f47976b623ca43f2b42a90fee90674cd, Config: {'lr': 0.01, 'epochs': 1}
+Round 1:
+Client ID: cac83507166c4d129ebd4ca13116bc7d, Config: {'lr': 0.01, 'epochs': 1}
+Round 2:
+Client ID: cac83507166c4d129ebd4ca13116bc7d, Config: {'lr': 0.01, 'epochs': 1}
+Round 3:
+Client ID: 613fcf5f184a48ed96a2eb445318d8d5, Config: {'lr': 0.01, 'epochs': 1}
+Round 4:
+Client ID: 613fcf5f184a48ed96a2eb445318d8d5, Config: {'lr': 0.01, 'epochs': 1}
+Round 5:
+Client ID: cac83507166c4d129ebd4ca13116bc7d, Config: {'lr': 0.01, 'epochs': 1}
+Round 1:
+Client ID: <flwr.server.superlink.fleet.grpc_bidi.grpc_client_proxy.GrpcClientProxy object at 0x7f236c06a790>, Config: {'lr': 0.01, 'epochs': 1}
+Round 2:
+Client ID: <flwr.server.superlink.fleet.grpc_bidi.grpc_client_proxy.GrpcClientProxy object at 0x7f236bd6fd90>, Config: {'lr': 0.01, 'epochs': 1}
+Round 3:
+Client ID: <flwr.server.superlink.fleet.grpc_bidi.grpc_client_proxy.GrpcClientProxy object at 0x7f236c06a790>, Config: {'lr': 0.01, 'epochs': 1}
+Round 4:
+Client ID: <flwr.server.superlink.fleet.grpc_bidi.grpc_client_proxy.GrpcClientProxy object at 0x7f236bd6df10>, Config: {'lr': 0.01, 'epochs': 1}
+Round 5:
+Client ID: <flwr.server.superlink.fleet.grpc_bidi.grpc_client_proxy.GrpcClientProxy object at 0x7f236bd6f8d0>, Config: {'lr': 0.01, 'epochs': 1}
+Round 1:
+Client ID: <flwr.server.superlink.fleet.grpc_bidi.grpc_client_proxy.GrpcClientProxy object at 0x7fdcd82e0f50>, Config: {'lr': 0.01, 'epochs': 1}
+Round 2:
+Client ID: <flwr.server.superlink.fleet.grpc_bidi.grpc_client_proxy.GrpcClientProxy object at 0x7fdcd8582750>, Config: {'lr': 0.01, 'epochs': 1}
+Round 3:
+Client ID: <flwr.server.superlink.fleet.grpc_bidi.grpc_client_proxy.GrpcClientProxy object at 0x7fdcd82e0f50>, Config: {'lr': 0.01, 'epochs': 1}
+Round 4:
+Client ID: <flwr.server.superlink.fleet.grpc_bidi.grpc_client_proxy.GrpcClientProxy object at 0x7fdcd8582750>, Config: {'lr': 0.01, 'epochs': 1}
+Round 5:
+Client ID: <flwr.server.superlink.fleet.grpc_bidi.grpc_client_proxy.GrpcClientProxy object at 0x7fdcd82e2750>, Config: {'lr': 0.01, 'epochs': 1}
+Round 1:
+Client ID: <flwr.server.superlink.fleet.grpc_bidi.grpc_client_proxy.GrpcClientProxy object at 0x7fcc7ae95490>, Config: {'lr': 0.01, 'epochs': 1}
+Round 2:
+Client ID: <flwr.server.superlink.fleet.grpc_bidi.grpc_client_proxy.GrpcClientProxy object at 0x7fcc7ae95490>, Config: {'lr': 0.01, 'epochs': 1}
+Round 3:
+Client ID: <flwr.server.superlink.fleet.grpc_bidi.grpc_client_proxy.GrpcClientProxy object at 0x7fccf9ac79d0>, Config: {'lr': 0.01, 'epochs': 1}
+Round 4:
+Client ID: <flwr.server.superlink.fleet.grpc_bidi.grpc_client_proxy.GrpcClientProxy object at 0x7fcc7ae955d0>, Config: {'lr': 0.01, 'epochs': 1}
+Round 5:
+Client ID: <flwr.server.superlink.fleet.grpc_bidi.grpc_client_proxy.GrpcClientProxy object at 0x7fcc7ae95490>, Config: {'lr': 0.01, 'epochs': 1}
+Round 1:
+Client ID: <flwr.server.superlink.fleet.grpc_bidi.grpc_client_proxy.GrpcClientProxy object at 0x7f483db8b910>, Config: {'lr': 0.01, 'epochs': 1}
+Round 2:
+Client ID: <flwr.server.superlink.fleet.grpc_bidi.grpc_client_proxy.GrpcClientProxy object at 0x7f483daed590>, Config: {'lr': 0.01, 'epochs': 1}
+Round 3:
+Client ID: <flwr.server.superlink.fleet.grpc_bidi.grpc_client_proxy.GrpcClientProxy object at 0x7f483e085890>, Config: {'lr': 0.01, 'epochs': 1}
+Round 4:
+Client ID: <flwr.server.superlink.fleet.grpc_bidi.grpc_client_proxy.GrpcClientProxy object at 0x7f483db8b910>, Config: {'lr': 0.01, 'epochs': 1}
+Round 5:
+Client ID: <flwr.server.superlink.fleet.grpc_bidi.grpc_client_proxy.GrpcClientProxy object at 0x7f483db8b910>, Config: {'lr': 0.01, 'epochs': 1}
+Round 1:
+Client ID: <flwr.server.superlink.fleet.grpc_bidi.grpc_client_proxy.GrpcClientProxy object at 0x7f02a806c490>, Config: {'lr': 0.01, 'epochs': 1}
+Round 2:
+Client ID: <flwr.server.superlink.fleet.grpc_bidi.grpc_client_proxy.GrpcClientProxy object at 0x7f02a806c490>, Config: {'lr': 0.01, 'epochs': 1}
+Round 3:
+Client ID: <flwr.server.superlink.fleet.grpc_bidi.grpc_client_proxy.GrpcClientProxy object at 0x7f02a8085290>, Config: {'lr': 0.01, 'epochs': 1}
+Round 4:
+Client ID: <flwr.server.superlink.fleet.grpc_bidi.grpc_client_proxy.GrpcClientProxy object at 0x7f02a8085290>, Config: {'lr': 0.01, 'epochs': 1}
+Round 5:
+Client ID: <flwr.server.superlink.fleet.grpc_bidi.grpc_client_proxy.GrpcClientProxy object at 0x7f02a806c490>, Config: {'lr': 0.01, 'epochs': 1}

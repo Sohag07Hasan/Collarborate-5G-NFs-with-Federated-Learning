@@ -90,6 +90,9 @@ def early_stopping(history: List[Dict], round_num: int) -> bool:
         return True  # Stop the training process
     return False
 
+##function to run server
+def run_flower_server():
+    pass
 
 if __name__ == "__main__":
     
@@ -101,7 +104,8 @@ if __name__ == "__main__":
 
     # Define the server configuration and start the server
     server_config = fl.server.ServerConfig(num_rounds=NUM_ROUNDS)
-    strategy = create_strategy(fit_config, weighted_average, get_evaluate_fn(centralized_testset), fit_metrics_aggregation)
+    #strategy = create_strategy(fit_config, weighted_average, get_evaluate_fn(centralized_testset), fit_metrics_aggregation)
+    strategy = create_strategy(get_evaluate_fn(centralized_testset))
     
     history = fl.server.start_server(
         server_address=SERVER_ADDRESS,
@@ -113,5 +117,10 @@ if __name__ == "__main__":
 
     save_training_time(start_time, end_time)
     save_history(history)
-    
+
+     # Write "done" to a file when server finishes training
+    with open("server_done.txt", "w") as f:
+        f.write("done")
+
+    print("Server training complete and flag written.")
 
