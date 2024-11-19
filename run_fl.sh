@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for FOLD in $(seq 1 5)
+for FOLD in $(seq 3 5)
 do
   echo "Running fold $FOLD..."
 

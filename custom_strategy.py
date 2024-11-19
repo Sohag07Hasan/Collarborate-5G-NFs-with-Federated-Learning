@@ -117,6 +117,7 @@ class CustomFedAvgEarlyStop(FedAvg):
         # Step 1: grabbing all the parameters
         accuracies = [fit_res.metrics.get("accuracy", 0.5) for _, fit_res in results]
         losses = [fit_res.metrics.get("loss", 0.0) for _, fit_res in results]
+        num_eval_examples = [fit_res.metrics.get("num_eval_example", 0) for _, fit_res in results] 
         num_examples = [fit_res.num_examples for _, fit_res in results]
         actual_client_ids = [fit_res.metrics.get("client_id", 0) for _, fit_res in results]
         fed_client_ids = [client.cid for client, _ in results]
@@ -128,17 +129,14 @@ class CustomFedAvgEarlyStop(FedAvg):
         if not self.client_mapping:
             self.client_mapping = dict(zip(actual_client_ids, fed_client_ids)) #Saving the mapping for future use
 
-        # Step 2 Clients that are not generating good accuracy we will give their weights high priority
-        # So we invese the weighted accuracy for that
-        # total_examples = sum(num_examples)
-        # print(f'Round: {server_round}; Total_examples: {total_examples}')
-        # weighted_avg = [(accuracies[i] * num_examples[i]) / total_examples for i in range(len(accuracies))]
-        # inverse_weighted_avg = [1 / value for value in weighted_avg]
-        # print(inverse_weighted_avg)
-        #total_inverse_weighted_avg = sum(inverse_weighted_avg)
-        #new_weights = [value / total_inverse_weighted_avg for value in inverse_weighted_avg]
-
+        # Step 2: adding contribution of accuracy to the eval_num_examples
         inverse_accuracies = [1 / value for value in accuracies] #Inversing to give priority to the low performing clients
+        weighted_num_eval_examples = np.multiply(inverse_accuracies, num_eval_examples).tolist()
+        sum_weighted_num_eval_examples = sum(weighted_num_eval_examples)
+        
+        ## adding eval_num_examples to the training_num_example
+        weighted_num_examples = np.multiply(num_examples, sum_weighted_num_eval_examples) / sum_weighted_num_eval_examples
+
 
        # Step 3: Integrate new weights in weights
         # weights_results = [
@@ -147,14 +145,8 @@ class CustomFedAvgEarlyStop(FedAvg):
         # ]
 
         weights = [parameters_to_ndarrays(fit_res.parameters) for _, fit_res in results]
-        # Ensure all weights are on CPU as numpy arrays for aggregation
-        # weights = [[tensor.cpu().numpy() if isinstance(tensor, torch.Tensor) else tensor for tensor in layer] for layer in weights]
-        weighted_num_examples = np.multiply(num_examples, inverse_accuracies).tolist()
-
+ 
         aggregated_ndarrays = self.original_aggregate(list(zip(weights,  weighted_num_examples)))
-        # print(f'Lenght of original: {len(aggregated_ndarrays)}')    
-        # weighted_aggregated_ndarrays = self.aggregate(list(zip( aggregated_ndarrays, inverse_weighted_avg)))
-        # print(f'Lenght of weighted: {len(weighted_aggregated_ndarrays)}')
         
         ## store the global model for each rounds
         self.global_models[server_round] = aggregated_ndarrays

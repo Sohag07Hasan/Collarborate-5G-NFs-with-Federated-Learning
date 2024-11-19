@@ -60,7 +60,7 @@ class FlowerClient(fl.client.NumPyClient):
         loss, accuracy = test(self.model, self.valloader, device=self.device)
 
         # return the model parameters to the server as well as extra info (number of training examples in this case)
-        return self.get_parameters({}), len(self.trainloader), {"accuracy": accuracy, "loss": float(loss), "num_example": len(self.valloader), "client_id":self.client_id}
+        return self.get_parameters({}), len(self.trainloader), {"accuracy": accuracy, "loss": float(loss), "num_eval_example": len(self.valloader), "client_id":self.client_id}
 
     def evaluate(self, parameters: NDArrays, config: Dict[str, Scalar]):
         """Evaluate the model sent by the server on this client's

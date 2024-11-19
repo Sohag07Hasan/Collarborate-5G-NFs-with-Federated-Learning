@@ -38,8 +38,8 @@
     ]
   },
   "training": {
-    "LEARNING_RATE": 0.0001,
-    "EPOCHS": 30,
+    "LEARNING_RATE": 1e-05,
+    "EPOCHS": 50,
     "BATCH_SIZE": 256,
     "MOMENTUM": 0.9,
     "NUM_CLASSES": 2
@@ -55,7 +55,7 @@
   },
   "strategy": {
     "NUM_CLIENTS": 4,
-    "NUM_ROUNDS": 5,
+    "NUM_ROUNDS": 25,
     "FRACTION_FIT": 1,
     "FRACTION_EVAL": 1,
     "MIN_FIT_CLIENTS": 4,
