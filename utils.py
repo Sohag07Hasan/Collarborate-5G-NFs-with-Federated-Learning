@@ -4,9 +4,10 @@ We'll be training the model in a Federated setting. In order to do that, we need
 * `train()` that will train the model given a dataloader.
 * `test()` that will be used to evaluate the performance of the model on held-out data, e.g., a training set.
 '''
-from config import NUM_ROUNDS, GLOBAL_MODEL_PATH, NUM_CLASSES, BATCH_SIZE, FOLDER_NAME, FOLD, NUM_FEATURES, FEATURE_TYPE
+from config import NUM_ROUNDS, GLOBAL_MODEL_PATH, NUM_CLASSES, BATCH_SIZE, FOLDER_NAME, FOLD, NUM_FEATURES, FEATURE_TYPE,  LOCAL_TRAIN_HISTORY_PATH
 from model import Net
 import torch
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 from collections import OrderedDict
 from torch.utils.data import DataLoader, TensorDataset
 import os
@@ -26,6 +27,106 @@ def train(net, trainloader, optim, epochs, device: str):
             optim.step()
 
 
+## This function will train the model with early stopping implemented
+
+import torch
+from torch.optim.lr_scheduler import ReduceLROnPlateau
+
+def train_with_early_stopping(
+    net,
+    trainloader,
+    testloader,
+    optimizer,
+    epochs,
+    device: str,
+    patience=3,
+    factor=0.1,  # Factor by which the LR will be reduced
+    min_lr=0.00001,  # Minimum LR after reduction
+):
+    """Train the network with ReduceLROnPlateau scheduler, early stopping, and learning rate tracking."""
+    criterion = torch.nn.CrossEntropyLoss()
+    net.train()
+
+    # Early stopping variables
+    best_val_accuracy = 0
+    epochs_without_improvement = 0
+    best_model_state = None  # To save the best model
+
+    # Store metrics for each epoch
+    metrics_history = {
+        "epoch": [],
+        "training_loss": [],
+        "training_accuracy": [],
+        "validation_loss": [],
+        "validation_accuracy": [],
+        "learning_rate": [],  # To track learning rate for each epoch
+    }
+
+    # ReduceLROnPlateau Scheduler
+    scheduler = ReduceLROnPlateau(optimizer, mode="max", patience=patience, factor=factor, min_lr=min_lr)
+
+    for epoch in range(epochs):
+        # Training loop
+        net.train()
+        correct_train, total_train, train_loss = 0, 0, 0.0
+        for iteration, batch in enumerate(trainloader):
+            features, labels = batch[0].to(device), batch[1].to(device)
+            optimizer.zero_grad()
+            outputs = net(features)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+
+            # Calculate training metrics
+            train_loss += loss.item() * labels.size(0)
+            _, predicted = torch.max(outputs, 1)
+            total_train += labels.size(0)
+            correct_train += (predicted == labels).sum().item()
+
+        # Calculate epoch-wise training loss and accuracy
+        epoch_train_loss = train_loss / total_train
+        epoch_train_accuracy = correct_train / total_train
+        metrics_history["training_loss"].append(epoch_train_loss)
+        metrics_history["training_accuracy"].append(epoch_train_accuracy)
+
+        # Validation loop
+        val_loss, val_accuracy = test(net, testloader, device)
+        metrics_history["validation_loss"].append(val_loss)
+        metrics_history["validation_accuracy"].append(val_accuracy)
+
+        # Track current learning rate
+        current_lr = optimizer.param_groups[0]["lr"]
+        metrics_history["learning_rate"].append(current_lr)
+
+        #assigning current epoch
+        metrics_history['epoch'].append(epoch + 1)
+
+        #print(f"Epoch {epoch + 1}/{epochs}, Training Loss: {epoch_train_loss:.4f}, Training Accuracy: {epoch_train_accuracy:.4f}, Validation Loss: {val_loss:.4f}, Validation Accuracy: {val_accuracy:.4f}, Learning Rate: {current_lr:.6f}")
+
+        # Update the scheduler with the validation accuracy
+        scheduler.step(val_accuracy)
+
+        # Early stopping condition
+        if val_accuracy > best_val_accuracy:
+            best_val_accuracy = val_accuracy
+            epochs_without_improvement = 0
+            best_model_state = net.state_dict()  # Save the best model state
+        else:
+            epochs_without_improvement += 1
+
+        if epochs_without_improvement >= 2 * patience:
+            #print(f"Early Stopping Triggered at Epoch {epoch + 1}.")
+            break
+
+    # Return the best model state and metrics history
+    return {
+        "model_state": best_model_state if best_model_state is not None else net.state_dict(),
+        "metrics_history": metrics_history,
+    }
+
+
+
+##Evaluate the function
 def test(net, testloader, device: str):
     """Validate the network on the entire test set."""
     criterion = torch.nn.CrossEntropyLoss()
@@ -143,6 +244,46 @@ def save_metrics_to_csv(client_fit_metrics, client_eval_metrics, server_fit_metr
         writer.writerows(rows)
 
     print(f" Metric Saved: {prepare_file_path(file_path)}")
+
+
+## This function will save client wise local metrics
+def save_local_train_history_to_csv(client_id, server_round, metrics):
+
+    print(server_round)
+
+    #Prepare file path
+    file_path = LOCAL_TRAIN_HISTORY_PATH.format("{}", client_id)
+
+    # Initialize CSV headers and rows
+    headers = ["Round", "Client", "Epoch", "Learing_Rate", "Train Accuracy", "Train Loss", "Validation Accuracy", "Validation Loss"]
+    rows = []
+
+    # Check if the file exists
+    if os.path.exists(prepare_file_path(file_path)):
+        mode = "a"  # Append mode
+    else:
+        mode = "w"  # Write mode
+
+    with open(prepare_file_path(prepare_file_path(file_path)), mode=mode, newline="") as file:
+        writer = csv.writer(file)
+        if mode == "w":
+            writer.writerow(headers)
+
+        for i, epoch in enumerate(metrics['epoch']):
+            training_accuracy = metrics['training_accuracy'][i] if metrics['training_accuracy'][i] > 0 else 0
+            validation_accuracy = metrics['validation_accuracy'][i] if metrics['validation_accuracy'][i] > 0 else 0
+            training_loss = metrics['training_loss'][i] if metrics['training_loss'][i] > 0 else 0
+            validation_loss = metrics['validation_loss'][i] if metrics['validation_loss'][i] > 0 else 0
+            learning_rate = metrics['learning_rate'][i] if metrics['learning_rate'][i] > 0 else 0
+
+            #Writing the row
+            writer.writerow([server_round, client_id, epoch, learning_rate, training_accuracy, training_loss, validation_accuracy, validation_loss])
+
+    print(f"Local Training Metric Saved: {prepare_file_path(file_path)}")
+
+
+
+   
 
 ## Save the mode based on parameters
 def save_model(parameters, file_path = GLOBAL_MODEL_PATH, num_classes=NUM_CLASSES):

@@ -1,7 +1,7 @@
 import flwr as fl
 #from strategy import create_strategy  
 from dataloader import get_centralized_testset
-from config import LEARNING_RATE, EPOCHS, NUM_ROUNDS, SERVER_ADDRESS, NUM_ROUNDS, HISTORY_PATH_TXT, HISTORY_PATH_PKL, TRAINING_TIME, EARLY_STOPPING_ROUNDS, IMPROVEMENT_THRESHOLD, NUM_CLIENTS, FRACTION_FIT, FRACTION_EVAL, MIN_FIT_CLIENTS, MIN_EVAL_CLIENTS
+from config import LEARNING_RATE, EPOCHS, NUM_ROUNDS, SERVER_ADDRESS, NUM_ROUNDS, HISTORY_PATH_TXT, HISTORY_PATH_PKL, TRAINING_TIME, NUM_CLIENTS, FRACTION_FIT, FRACTION_EVAL, MIN_FIT_CLIENTS, MIN_EVAL_CLIENTS
 from flwr.common import Metrics, Scalar
 from utils import get_evaluate_fn, clear_cuda_cache, prepare_file_path
 from typing import Dict, List, Tuple
@@ -15,11 +15,11 @@ from custom_strategy import CustomFedAvgEarlyStop
 ## Collecting Datasets
 #centralized_testset = get_centralized_testset()
 
-# Early stopping parameters
-early_stopping_rounds = EARLY_STOPPING_ROUNDS  # Stop training if no significant improvement after this many rounds
-improvement_threshold = IMPROVEMENT_THRESHOLD  # Minimum required improvement in accuracy to continue
-best_accuracy = 0.0
-no_improvement_counter = 0  # Counter to track rounds with no improvement
+# # Early stopping parameters
+# early_stopping_rounds = EARLY_STOPPING_ROUNDS  # Stop training if no significant improvement after this many rounds
+# improvement_threshold = IMPROVEMENT_THRESHOLD  # Minimum required improvement in accuracy to continue
+# best_accuracy = 0.0
+# no_improvement_counter = 0  # Counter to track rounds with no improvement
 
 
 #before fitting each client locally this function will send the fit configuraiton

@@ -2,11 +2,11 @@ import flwr as fl
 from collections import OrderedDict
 from typing import Dict, List, Tuple
 from flwr.common import NDArrays, Scalar
-from utils import train, test, to_tensor
+from utils import train, test, to_tensor, train_with_early_stopping, save_local_train_history_to_csv
 from model import Net
 import torch
 from torch.utils.data import DataLoader
-from config import SERVER_ADDRESS, NUM_CLASSES, BATCH_SIZE
+from config import SERVER_ADDRESS, NUM_CLASSES, BATCH_SIZE, MIN_LR, FACTOR, PATIENCE_ON_EPOCH
 #from simulation import client_fn_callback
 from flwr_datasets import FederatedDataset
 #from dataloader import get_datasets, apply_transforms
@@ -48,19 +48,29 @@ class FlowerClient(fl.client.NumPyClient):
         self.set_parameters(parameters)
 
         # read from config
-        lr, epochs = config["lr"], config["epochs"]
+        lr, epochs, server_round = config["lr"], config["epochs"], config["server_round"]
 
         # Define the optimizer
         optim = torch.optim.SGD(self.model.parameters(), lr=lr, momentum=0.9)
 
         # do local training
-        train(self.model, self.trainloader, optim, epochs=epochs, device=self.device)
+        #train(self.model, self.trainloader, optim, epochs=epochs, device=self.device)
+        #def train_with_early_stopping(client_id, net, trainloader, testloader, optimizer, epochs, device: str, patience=3, min_lr=0.001, max_lr=0.01):
+        results = train_with_early_stopping(self.model, self.trainloader, self.valloader, optim, epochs=epochs, device=self.device, patience=PATIENCE_ON_EPOCH, factor=FACTOR, min_lr=MIN_LR)
+        parameters = list(results['model_state'].values())
+        self.set_parameters(parameters) ## setting up the best model
 
-        # planning to return the evaluation metrics with weights to make it weighted
+        #Saving local model train history
+        save_local_train_history_to_csv(self.client_id, server_round, results['metrics_history'])
+
+        best_learing_rate = min(results['metrics_history']['learning_rate'])
+
+        # planning to return the evaluation metrics with weights to make
+        # utilizing best model performances
         loss, accuracy = test(self.model, self.valloader, device=self.device)
 
         # return the model parameters to the server as well as extra info (number of training examples in this case)
-        return self.get_parameters({}), len(self.trainloader), {"accuracy": accuracy, "loss": float(loss), "num_eval_example": len(self.valloader), "client_id":self.client_id}
+        return self.get_parameters({}), len(self.trainloader), {"accuracy": accuracy, "loss": float(loss), "num_eval_example": len(self.valloader), "client_id":self.client_id, "best_learning_rate": best_learing_rate} #"local_train_history": results['metrics_history']
 
     def evaluate(self, parameters: NDArrays, config: Dict[str, Scalar]):
         """Evaluate the model sent by the server on this client's

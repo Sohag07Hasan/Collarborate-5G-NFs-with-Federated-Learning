@@ -3,11 +3,11 @@ from typing import Dict, List, Tuple, Callable, Optional, Union
 from logging import WARNING
 
 ##configuration
-from config import NUM_ROUNDS, BATCH_SIZE, GLOBAL_MODEL_PATH, NUM_CLASSES, METRIC_PATH, BEST_GLOBAL_MODEL_PATH
+from config import NUM_ROUNDS, BATCH_SIZE, GLOBAL_MODEL_PATH, NUM_CLASSES, METRIC_PATH, BEST_GLOBAL_MODEL_PATH, LOCAL_TRAIN_HISTORY_PATH
 from dataloader import get_centralized_testset
 from torch.utils.data import DataLoader, TensorDataset
 from model import Net
-from utils import to_tensor, test, prepare_file_path, save_metrics_to_csv, save_model
+from utils import to_tensor, test, prepare_file_path, save_metrics_to_csv, save_model,  save_local_train_history_to_csv
 import torch
 import numpy as np
 from collections import OrderedDict
@@ -65,6 +65,7 @@ class CustomFedAvgEarlyStop(FedAvg):
         self.max_rounds = max_rounds
         self.current_round = 0
         self.client_mapping = {}
+        self.local_train_history = {}
 
         ##Early Stopping critera
         self.is_early_stop_applicable = False
@@ -88,14 +89,21 @@ class CustomFedAvgEarlyStop(FedAvg):
         
         for client in clients:
             # Initialize client-specific configurations if not yet set
-            if client.cid not in self.fit_configs:
-                self.fit_configs[client.cid] = {
-                    "lr": self.initial_lr,
-                    "epochs": self.initial_epochs,
-                }
+            # if client.cid not in self.fit_configs:
+            #     self.fit_configs[client.cid] = {
+            #         "lr": self.initial_lr,
+            #         "epochs": self.initial_epochs,
+            #     }
             
-            # Use the dynamically adjusted values for each client
-            client_config = self.fit_configs[client.cid]
+            # # Use the dynamically adjusted values for each client
+            #client_config = self.fit_configs[client.cid]
+            client_config = {
+                #"lr": self.fit_configs.get(client.cid, {}).get('lr', self.initial_lr),
+                "lr": self.initial_lr,
+                "epochs": self.initial_epochs,
+                "server_round": self.current_round
+            }
+            
             fit_ins = FitIns(parameters, client_config)
             fit_configurations.append((client, fit_ins))
         
@@ -120,7 +128,22 @@ class CustomFedAvgEarlyStop(FedAvg):
         num_eval_examples = [fit_res.metrics.get("num_eval_example", 0) for _, fit_res in results] 
         num_examples = [fit_res.num_examples for _, fit_res in results]
         actual_client_ids = [fit_res.metrics.get("client_id", 0) for _, fit_res in results]
+        #local_train_history = [fit_res.metrics.get("local_train_history", 0) for _, fit_res in results]
         fed_client_ids = [client.cid for client, _ in results]
+        best_learning_rates = [fit_res.metrics.get("best_learning_rate", self.initial_lr) for _, fit_res in results]
+        
+        ## Storing the learning rate to next round usage
+        for id, client_id in enumerate(fed_client_ids):
+            self.fit_configs[client_id] = {'lr': best_learning_rates[id]}
+
+        # ## Storing local Training history
+        #self.local_train_history[server_round] = list(zip(actual_client_ids, local_train_history))
+
+        # self.local_train_history.append({
+        #     'server_rounds': server_round,
+        #     'clients': actual_client_ids,
+        #     'history': local_train_history
+        # })
 
         ## Storing client wise fit metrics
         self.client_fit_metrics['accuracy'][server_round] = list(zip(actual_client_ids, accuracies))
@@ -139,13 +162,7 @@ class CustomFedAvgEarlyStop(FedAvg):
 
 
        # Step 3: Integrate new weights in weights
-        # weights_results = [
-        #     (parameters_to_ndarrays(fit_res.parameters), fit_res.num_examples)
-        #     for _, fit_res in results
-        # ]
-
-        weights = [parameters_to_ndarrays(fit_res.parameters) for _, fit_res in results]
- 
+        weights = [parameters_to_ndarrays(fit_res.parameters) for _, fit_res in results] 
         aggregated_ndarrays = self.original_aggregate(list(zip(weights,  weighted_num_examples)))
         
         ## store the global model for each rounds
@@ -306,7 +323,10 @@ class CustomFedAvgEarlyStop(FedAvg):
         save_model(self.global_models.get(highest_accuracy_round), file_path=BEST_GLOBAL_MODEL_PATH)
 
         #Save the metrics
-        save_metrics_to_csv(self.client_fit_metrics, self.client_eval_metrics, self.server_fit_metrics, self.server_eval_metrics, METRIC_PATH)
+        save_metrics_to_csv(self.client_fit_metrics, self.client_eval_metrics, self.server_fit_metrics, self.server_eval_metrics, METRIC_PATH, )
+
+        #Save local training history
+        #save_local_train_history_to_csv(self.local_train_history, LOCAL_TRAIN_HISTORY_PATH)
 
 
 
