@@ -79,8 +79,6 @@ strategy = CustomFedAvgEarlyStop(
     mfc = MIN_FIT_CLIENTS, # min_fit_clients
     mec = MIN_EVAL_CLIENTS, #min_evaluate_clients
     mac = NUM_CLIENTS, #min_available_clients
-
-
 )
 
 if __name__ == "__main__":
@@ -93,9 +91,6 @@ if __name__ == "__main__":
 
     # Define the server configuration and start the server
     server_config = fl.server.ServerConfig(num_rounds=NUM_ROUNDS)
-    #strategy = create_strategy(fit_config, weighted_average, get_evaluate_fn(centralized_testset), fit_metrics_aggregation)
-    #strategy = create_strategy(get_evaluate_fn(centralized_testset))
-
     history = fl.server.start_server(
         server_address=SERVER_ADDRESS,
         #config={"num_rounds": 1},

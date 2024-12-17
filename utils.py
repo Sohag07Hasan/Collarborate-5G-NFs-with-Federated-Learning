@@ -60,6 +60,7 @@ def train_with_early_stopping(
         "validation_loss": [],
         "validation_accuracy": [],
         "learning_rate": [],  # To track learning rate for each epoch
+       # "training_time": []
     }
 
     # ReduceLROnPlateau Scheduler
@@ -249,7 +250,7 @@ def save_metrics_to_csv(client_fit_metrics, client_eval_metrics, server_fit_metr
 ## This function will save client wise local metrics
 def save_local_train_history_to_csv(client_id, server_round, metrics):
 
-    print(server_round)
+    #print(server_round)
 
     #Prepare file path
     file_path = LOCAL_TRAIN_HISTORY_PATH.format("{}", client_id)
@@ -279,7 +280,7 @@ def save_local_train_history_to_csv(client_id, server_round, metrics):
             #Writing the row
             writer.writerow([server_round, client_id, epoch, learning_rate, training_accuracy, training_loss, validation_accuracy, validation_loss])
 
-    print(f"Local Training Metric Saved: {prepare_file_path(file_path)}")
+    #print(f"Local Training Metric Saved: {prepare_file_path(file_path)}")
 
 
 

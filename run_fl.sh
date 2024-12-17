@@ -28,7 +28,8 @@ do
   # Start the server and redirect its output to a log file, capture its PID
   echo "Starting the server for fold $FOLD on port $PORT..."
   START=$(date +%s)
-  python server.py > ./logs/server_fold_$FOLD.log 2>&1 &
+  #python server.py > ./logs/server_fold_$FOLD.log 2>&1 &
+  python custom-server-instantiate.py > ./logs/server_fold_$FOLD.log 2>&1 &
   SERVER_PID=$!
 
   # Give the server some time to start up

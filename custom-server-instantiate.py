@@ -1,0 +1,109 @@
+import flwr
+from flwr.server.client_manager import SimpleClientManager
+from concurrent import futures
+import time
+import pickle
+
+from custom_strategy import CustomFedAvgEarlyStop  # Your custom strategy with early stopping logic
+from server_early_stopping import EarlyStoppingServer  # The custom server
+from utils import clear_cuda_cache, prepare_file_path
+from config import LEARNING_RATE, EPOCHS, NUM_ROUNDS, SERVER_ADDRESS, NUM_ROUNDS, HISTORY_PATH_TXT, HISTORY_PATH_PKL, TRAINING_TIME, NUM_CLIENTS, FRACTION_FIT, FRACTION_EVAL, MIN_FIT_CLIENTS, MIN_EVAL_CLIENTS, ELAPSED_TIME
+
+
+
+
+
+def create_strategy():
+    # Early stopping function
+    strategy = CustomFedAvgEarlyStop(
+        ##Testing params
+        # initial_lr = 0.1, #LEARNING_RATE,
+        # initial_epochs = 2, #EPOCHS,
+        # lr_adjustment_factor = 0.1,
+        # min_lr = 0.1,
+        # improvement_threshold = 0.01,
+        # max_rounds = 2, #NUM_ROUNDS,
+        # ff = 0.5, #FRACTION_FIT, #fraction_fit
+        # fe = 0.5, #FRACTION_EVAL, #fraction_evaluate
+        # mfc = 2, #MIN_FIT_CLIENTS, # min_fit_clients
+        # mec = 2, #MIN_EVAL_CLIENTS, #min_evaluate_clients
+        # mac = 2 #NUM_CLIENTS, #min_available_clients
+
+        # ##Actual params
+        initial_lr = LEARNING_RATE,
+        initial_epochs = EPOCHS,
+        lr_adjustment_factor = 0.1,
+        min_lr = 0.1,
+        improvement_threshold = 0.01,
+        max_rounds = NUM_ROUNDS,
+        ff = FRACTION_FIT, #fraction_fit
+        fe = FRACTION_EVAL, #fraction_evaluate
+        mfc = MIN_FIT_CLIENTS, # min_fit_clients
+        mec = MIN_EVAL_CLIENTS, #min_evaluate_clients
+        mac = NUM_CLIENTS, #min_available_clients
+    )
+
+    return strategy
+
+
+#Store Training time 
+def save_training_time(start_time, end_time):
+    training_time = end_time - start_time
+    # Save as a plain text file
+    with open(prepare_file_path(TRAINING_TIME), 'w') as file:
+        file.write(str(training_time))
+
+#Store the history
+def save_history(history, path_text=HISTORY_PATH_TXT, path_pkl=HISTORY_PATH_PKL):
+    with open(prepare_file_path(path_pkl), "wb") as file:
+        pickle.dump(history, file)
+
+        # Save as a plain text file
+    with open(prepare_file_path(path_text), 'w') as file:
+        file.write(str(history))
+    
+    print(f"history saved as text @ {prepare_file_path(path_text)}")
+    print(f"history saved as picle @ {prepare_file_path(path_pkl)}")
+
+
+if __name__ == "__main__":
+
+    #clear the GPU cache
+    clear_cuda_cache()
+
+    # Start timing
+    start_time = time.time()
+
+    # Define client manager and custom strategy
+    client_manager = SimpleClientManager()
+    strategy = create_strategy()  # Your strategy
+
+    # Instantiate the EarlyStoppingServer
+    server = EarlyStoppingServer(client_manager=client_manager, strategy=strategy)
+    # Define the server configuration and start the server
+    server_config = flwr.server.ServerConfig(num_rounds=NUM_ROUNDS)  
+
+    # Start federated training
+    #history, elapsed_time = server.fit(num_rounds=NUM_ROUNDS, timeout=10.0)
+
+    history = flwr.server.start_server(
+        server = server,
+        server_address=SERVER_ADDRESS,
+        #config={"num_rounds": 1},
+        config = server_config,
+        #strategy=strategy,  # Use the imported strategy
+    )
+
+
+    # End timing
+    end_time = time.time()
+    save_training_time(start_time, end_time)
+    save_history(history)
+
+    print("History:", history)
+
+    # Write "done" to a file when server finishes training
+    # Bash Script will understand and rerun the next fold
+    with open("server_done.txt", "w") as f:
+        f.write("done")
+    print("Server training complete and flag written.")
