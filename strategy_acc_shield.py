@@ -34,7 +34,7 @@ from flwr.server.client_proxy import ClientProxy
 from flwr.server.strategy.aggregate import aggregate, weighted_loss_avg
 
 
-class CustomFedAvgEarlyStop(FedAvg):
+class FLAccShield(FedAvg):
     def __init__(
         self,
         initial_lr=0.01,
@@ -42,7 +42,7 @@ class CustomFedAvgEarlyStop(FedAvg):
         lr_adjustment_factor=0.1,
         min_lr=0.0001,
         improvement_threshold=0.01,  # Minimum accuracy improvement threshold
-        max_rounds=20,               # Maximum number of rounds if not stopped early
+        training_rounds=20,               # Maximum number of rounds if not stopped early
         ff=1,
         fe=1,
         mfc=2,
@@ -62,7 +62,7 @@ class CustomFedAvgEarlyStop(FedAvg):
         self.global_models = {} ##Store global model parameters
         self.improvement_threshold = improvement_threshold ## accuracy should be improved by this threshold
         self.threshold_rounds_for_early_stopping = 5 
-        self.max_rounds = max_rounds
+        self.training_rounds = training_rounds
         self.current_round = 0
         self.client_mapping = {}
         self.local_train_history = {}
@@ -224,14 +224,9 @@ class CustomFedAvgEarlyStop(FedAvg):
         weights_prime = [layer / num_examples_total for layer in weighted_sum]
         return weights_prime
 
-
-    def should_continue_training(self) -> bool:
-        """Check if training should continue."""
-        # Stop if the current round exceeds max_rounds due to early stopping
-        return self.current_round <= self.max_rounds and not self.is_early_stop_applicable
-
+    ## Return the Name of the Strategy
     def __repr__(self):
-        return "CustomFedAvgEarlyStop with dynamic LR/epoch adjustment and early stopping"
+        return "Federate Larnign with dynamic LR/epoch adjustment and early stopping"
     
     def aggregate_evaluate(
         self,
@@ -306,7 +301,7 @@ class CustomFedAvgEarlyStop(FedAvg):
         self.server_eval_metrics['loss'][server_round] = metrics_aggregated['loss']
 
         ##if it is last round is it save the metrics
-        if server_round == self.max_rounds:
+        if self.is_early_stop_applicable or server_round == self.training_rounds:
             self.save_all_data()
 
         return loss_aggregated, metrics_aggregated
@@ -323,7 +318,7 @@ class CustomFedAvgEarlyStop(FedAvg):
         save_model(self.global_models.get(highest_accuracy_round), file_path=BEST_GLOBAL_MODEL_PATH)
 
         #Save the metrics
-        save_metrics_to_csv(self.client_fit_metrics, self.client_eval_metrics, self.server_fit_metrics, self.server_eval_metrics, METRIC_PATH, )
+        save_metrics_to_csv(self.client_fit_metrics, self.client_eval_metrics, self.server_fit_metrics, self.server_eval_metrics, METRIC_PATH)
 
         #Save local training history
         #save_local_train_history_to_csv(self.local_train_history, LOCAL_TRAIN_HISTORY_PATH)

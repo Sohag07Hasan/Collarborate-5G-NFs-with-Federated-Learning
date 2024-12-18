@@ -9,10 +9,6 @@ from server_early_stopping import EarlyStoppingServer  # The custom server
 from utils import clear_cuda_cache, prepare_file_path
 from config import LEARNING_RATE, EPOCHS, NUM_ROUNDS, SERVER_ADDRESS, NUM_ROUNDS, HISTORY_PATH_TXT, HISTORY_PATH_PKL, TRAINING_TIME, NUM_CLIENTS, FRACTION_FIT, FRACTION_EVAL, MIN_FIT_CLIENTS, MIN_EVAL_CLIENTS, ELAPSED_TIME
 
-
-
-
-
 def create_strategy():
     # Early stopping function
     strategy = CustomFedAvgEarlyStop(
@@ -67,7 +63,6 @@ def save_history(history, path_text=HISTORY_PATH_TXT, path_pkl=HISTORY_PATH_PKL)
 
 
 if __name__ == "__main__":
-
     #clear the GPU cache
     clear_cuda_cache()
 
@@ -83,17 +78,11 @@ if __name__ == "__main__":
     # Define the server configuration and start the server
     server_config = flwr.server.ServerConfig(num_rounds=NUM_ROUNDS)  
 
-    # Start federated training
-    #history, elapsed_time = server.fit(num_rounds=NUM_ROUNDS, timeout=10.0)
-
     history = flwr.server.start_server(
         server = server,
         server_address=SERVER_ADDRESS,
-        #config={"num_rounds": 1},
-        config = server_config,
-        #strategy=strategy,  # Use the imported strategy
+        config = server_config
     )
-
 
     # End timing
     end_time = time.time()

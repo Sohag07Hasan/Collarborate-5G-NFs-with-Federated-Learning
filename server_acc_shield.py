@@ -8,62 +8,13 @@ import timeit
 
 
 
-class EarlyStoppingServer(Server):
+class ServerAccShield(Server):
     """Custom Server class with early stopping based on strategy evaluation."""
 
     def __init__(self, *args, **kwargs):
         """Initialize the EarlyStoppingServer."""
         super().__init__(*args, **kwargs)
-
-    # def evaluate_round(self, server_round: int, timeout: float):
-    #     """
-    #     Extended evaluate_round to check early stopping condition.
-
-    #     Returns:
-    #         A flag indicating whether early stopping is triggered.
-    #     """
-    #     # Perform the standard evaluation round
-    #     results = super().evaluate_round(server_round=server_round, timeout=timeout)
-
-    #     # After evaluation, check for early stopping condition in strategy
-    #     if self.strategy.is_early_stop_applicable:
-    #         log(WARNING, f"Early stopping triggered at round {server_round}")
-    #         return True  # Signal to stop training
-    #     return False  # Continue training
-
-    # def fit(self, num_rounds: int, timeout: float):
-    #     """Run federated training with early stopping."""
-    #     history = History()
-
-    #     # Initialize parameters
-    #     log(INFO, "[INIT] Starting federated training with Early Stopping")
-    #     self.parameters = self._get_initial_parameters(server_round=0, timeout=timeout)
-
-    #     start_time = timeit.default_timer()
-
-    #     for current_round in range(1, num_rounds + 1):
-    #         log(INFO, f"[ROUND {current_round}]")
-
-    #         # Perform training round
-    #         res_fit = self.fit_round(server_round=current_round, timeout=timeout)
-    #         if res_fit is not None:
-    #             parameters_prime, fit_metrics, _ = res_fit
-    #             if parameters_prime:
-    #                 self.parameters = parameters_prime
-
-    #         # Perform evaluation round and check for early stopping
-    #         if self.evaluate_round(server_round=current_round, timeout=timeout):
-    #             log(INFO, f"Stopping early at round {current_round}")
-    #             break
-
-    #     # Graceful shutdown of clients
-    #     self.disconnect_all_clients(timeout=timeout)
-
-    #     end_time = timeit.default_timer()
-    #     elapsed = end_time - start_time
-    #     log(INFO, f"Training completed in {elapsed:.2f} seconds")
-    #     return history, elapsed
-
+  
         # pylint: disable=too-many-locals
     def fit(self, num_rounds: int, timeout: Optional[float]) -> tuple[History, float]:
         """Run federated averaging for a number of rounds."""

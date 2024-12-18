@@ -12,6 +12,7 @@ from collections import OrderedDict
 from torch.utils.data import DataLoader, TensorDataset
 import os
 import csv
+import timeit
 
 
 def train(net, trainloader, optim, epochs, device: str):
@@ -60,13 +61,16 @@ def train_with_early_stopping(
         "validation_loss": [],
         "validation_accuracy": [],
         "learning_rate": [],  # To track learning rate for each epoch
-       # "training_time": []
+        "training_time": [] #track the trainign time
     }
 
     # ReduceLROnPlateau Scheduler
     scheduler = ReduceLROnPlateau(optimizer, mode="max", patience=patience, factor=factor, min_lr=min_lr)
 
     for epoch in range(epochs):
+        #start the timer
+        start_time = timeit.default_timer()
+
         # Training loop
         net.train()
         correct_train, total_train, train_loss = 0, 0, 0.0
@@ -83,6 +87,11 @@ def train_with_early_stopping(
             _, predicted = torch.max(outputs, 1)
             total_train += labels.size(0)
             correct_train += (predicted == labels).sum().item()
+
+        #end time
+        end_time = timeit.default_timer()
+        elapsed = end_time - start_time
+        metrics_history["training_time"].append( elapsed) #tracking the time
 
         # Calculate epoch-wise training loss and accuracy
         epoch_train_loss = train_loss / total_train
@@ -256,7 +265,7 @@ def save_local_train_history_to_csv(client_id, server_round, metrics):
     file_path = LOCAL_TRAIN_HISTORY_PATH.format("{}", client_id)
 
     # Initialize CSV headers and rows
-    headers = ["Round", "Client", "Epoch", "Learing_Rate", "Train Accuracy", "Train Loss", "Validation Accuracy", "Validation Loss"]
+    headers = ["Round", "Client", "Epoch", "Learing_Rate", "Train Accuracy", "Train Loss", "Validation Accuracy", "Validation Loss", "Training Time (S)"]
     rows = []
 
     # Check if the file exists
@@ -276,14 +285,12 @@ def save_local_train_history_to_csv(client_id, server_round, metrics):
             training_loss = metrics['training_loss'][i] if metrics['training_loss'][i] > 0 else 0
             validation_loss = metrics['validation_loss'][i] if metrics['validation_loss'][i] > 0 else 0
             learning_rate = metrics['learning_rate'][i] if metrics['learning_rate'][i] > 0 else 0
+            training_time = metrics['training_time'][i] if metrics['training_time'][i] > 0 else 0
 
             #Writing the row
-            writer.writerow([server_round, client_id, epoch, learning_rate, training_accuracy, training_loss, validation_accuracy, validation_loss])
+            writer.writerow([server_round, client_id, epoch, learning_rate, training_accuracy, training_loss, validation_accuracy, validation_loss, training_time])
 
     #print(f"Local Training Metric Saved: {prepare_file_path(file_path)}")
-
-
-
    
 
 ## Save the mode based on parameters
@@ -294,13 +301,6 @@ def save_model(parameters, file_path = GLOBAL_MODEL_PATH, num_classes=NUM_CLASSE
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         model.to(device)  # send model to device
 
-        #  # Ensure `parameters` is an iterable and move it to CPU if necessary
-        # if isinstance(parameters, torch.Tensor):  # Single tensor case
-        #     parameters = parameters.cpu().tolist()  # Convert to a list after moving to CPU
-        # else:  # Iterable of tensors
-        #     parameters = [p.cpu().numpy() if p.is_cuda else p.numpy() for p in parameters]
-
-        
         # set parameters to the model
         params_dict = zip(model.state_dict().keys(), parameters)
         state_dict = OrderedDict({k: torch.Tensor(v) for k, v in params_dict})

@@ -1,6 +1,6 @@
 {
   "dataset_path": {
-    "FOLD": 5,
+    "FOLD": 1,
     "TRAIN_DATASET_PATH_PCA": "./feature_engineering/dataset/client_{0}/fold_{1}/pca/client_{0}_pca_train_dataset.csv",
     "TEST_DATASET_PATH_PCA": "./feature_engineering/dataset/client_{0}/fold_{1}/pca/client_{0}_pca_test_dataset.csv",
     "TRAIN_DATASET_PATH_ORIGINAL": "./feature_engineering/dataset/client_{0}/fold_{1}/client_{0}_scaled_train_dataset.csv",
@@ -54,24 +54,24 @@
     "BEST_GLOBAL_MODEL_PATH": "./results/{}/best_global_model.pth",
     "HISTORY_PATH_TXT": "./results/{}/history.txt",
     "HISTORY_PATH_PKL": "./results/{}/history.pkl",
-    "ELAPSED_TIME": "./results/{}/elapsed_time.txt",
     "TRAINING_TIME": "./results/{}/training_time.txt",
     "METRIC_PATH": "./results/{}/metrics.csv",
     "LOCAL_TRAIN_HISTORY_PATH": "./results/{}/local_train_history_{}.csv"
   },
   "strategy": {
     "NUM_CLIENTS": 4,
-    "NUM_ROUNDS": 20,
+    "NUM_ROUNDS": 25,
     "FRACTION_FIT": 1,
     "FRACTION_EVAL": 1,
     "MIN_FIT_CLIENTS": 4,
     "MIN_EVAL_CLIENTS": 4
   },
   "server": {
-    "SERVER_ADDRESS": "0.0.0.0:8085"
+    "SERVER_ADDRESS": "0.0.0.0:8081"
   },
   "early_stopping": {
     "PATIENCE_ON_EPOCH": 3,
-    "IMPROVEMENT_THRESHOLD": 0.001
+    "IMPROVEMENT_THRESHOLD": 0.001,
+    "__comment": "IMPROVEMENT_THRESHOLD Not in Use"
   }
 }
