@@ -30,22 +30,14 @@ from config import (
     FRACTION_EVAL,
     MIN_FIT_CLIENTS,
     MIN_EVAL_CLIENTS,
+    LR_ADJUSTMENT_FACTOR,
+    MIN_LR,
+    PATIENCE_ON_EPOCH
 )
 from dataloader import get_centralized_testset  # Centralized testset loader
 
 # Typing
 from typing import Dict, List, Tuple
-
-
-# Only required for FedAVG
-def fit_config(server_round: int) -> Dict[str, Scalar]:
-    """Return a configuration with static batch size and (local) epochs."""
-    config = {
-        "epochs": EPOCHS,  # Number of local epochs done by clients
-        "lr": LEARNING_RATE,  # Learning rate to use by clients during fit()
-        "server_round": server_round ##Number of Rounds sent to Client
-    }
-    return config
 
 
 #Store the history
@@ -68,26 +60,13 @@ def save_training_time(elapse):
 def create_strategy():
     # Early stopping function
     strategy = FLAccShield(
-        ##Testing params
-        # initial_lr = 0.1, #LEARNING_RATE,
-        # initial_epochs = 2, #EPOCHS,
-        # lr_adjustment_factor = 0.1,
-        # min_lr = 0.1,
-        # improvement_threshold = 0.01,
-        # max_rounds = 2, #NUM_ROUNDS,
-        # ff = 0.5, #FRACTION_FIT, #fraction_fit
-        # fe = 0.5, #FRACTION_EVAL, #fraction_evaluate
-        # mfc = 2, #MIN_FIT_CLIENTS, # min_fit_clients
-        # mec = 2, #MIN_EVAL_CLIENTS, #min_evaluate_clients
-        # mac = 2 #NUM_CLIENTS, #min_available_clients
-
-        # ##Actual params
         initial_lr = LEARNING_RATE,
         initial_epochs = EPOCHS,
-        lr_adjustment_factor = 0.1,
-        min_lr = 0.1,
+        lr_adjustment_factor = LR_ADJUSTMENT_FACTOR,
+        min_lr = MIN_LR,
         improvement_threshold = 0.01,
         training_rounds = NUM_ROUNDS,
+        patience_on_epoch = PATIENCE_ON_EPOCH,
         ff = FRACTION_FIT, #fraction_fit
         fe = FRACTION_EVAL, #fraction_evaluate
         mfc = MIN_FIT_CLIENTS, # min_fit_clients

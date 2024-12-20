@@ -46,7 +46,10 @@
   },
   "learning_rate_schedular": {
     "MIN_LR": 1e-06,
-    "FACTOR": 0.1
+    "LR_ADJUSTMENT_FACTOR": 0.1
+  },
+  "early_stopping": {
+    "PATIENCE_ON_EPOCH": 3
   },
   "results_path": {
     "FOLDER_NAME": "{0}_{1}_fold_{2}",
@@ -60,7 +63,7 @@
   },
   "strategy": {
     "NUM_CLIENTS": 4,
-    "NUM_ROUNDS": 25,
+    "NUM_ROUNDS": 20,
     "FRACTION_FIT": 1,
     "FRACTION_EVAL": 1,
     "MIN_FIT_CLIENTS": 4,
@@ -68,10 +71,5 @@
   },
   "server": {
     "SERVER_ADDRESS": "0.0.0.0:8081"
-  },
-  "early_stopping": {
-    "PATIENCE_ON_EPOCH": 3,
-    "IMPROVEMENT_THRESHOLD": 0.001,
-    "__comment": "IMPROVEMENT_THRESHOLD Not in Use"
   }
 }

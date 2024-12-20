@@ -42,7 +42,8 @@ class FLAccShield(FedAvg):
         lr_adjustment_factor=0.1,
         min_lr=0.0001,
         improvement_threshold=0.01,  # Minimum accuracy improvement threshold
-        training_rounds=20,               # Maximum number of rounds if not stopped early
+        training_rounds=20,    # Maximum number of rounds if not stopped early
+        patience_on_epoch = 3, #
         ff=1,
         fe=1,
         mfc=2,
@@ -54,6 +55,7 @@ class FLAccShield(FedAvg):
         self.initial_epochs = initial_epochs
         self.lr_adjustment_factor = lr_adjustment_factor # not in use
         self.min_lr = min_lr # not in use
+        self.patience_on_epoch = patience_on_epoch
         self.fit_configs = {}  # Store individual client configurations
         self.client_fit_metrics = {'accuracy': {}, 'loss': {}}  # Track evaluation metrics per client
         self.client_eval_metrics = {'accuracy': {}, 'loss': {}}  # Track evaluation metrics per client
@@ -101,7 +103,11 @@ class FLAccShield(FedAvg):
                 #"lr": self.fit_configs.get(client.cid, {}).get('lr', self.initial_lr),
                 "lr": self.initial_lr,
                 "epochs": self.initial_epochs,
-                "server_round": self.current_round
+                "server_round": self.current_round,
+                "patience_on_epoch": self.patience_on_epoch,
+                "lr_adjustment_factor": self.lr_adjustment_factor,
+                "min_lr": self.min_lr
+
             }
             
             fit_ins = FitIns(parameters, client_config)

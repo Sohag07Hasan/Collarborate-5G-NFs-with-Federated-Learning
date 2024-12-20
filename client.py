@@ -6,7 +6,7 @@ from utils import train, test, to_tensor, train_with_early_stopping, save_local_
 from model import Net
 import torch
 from torch.utils.data import DataLoader
-from config import SERVER_ADDRESS, NUM_CLASSES, BATCH_SIZE, MIN_LR, FACTOR, PATIENCE_ON_EPOCH
+from config import SERVER_ADDRESS, NUM_CLASSES, BATCH_SIZE
 #from simulation import client_fn_callback
 from flwr_datasets import FederatedDataset
 #from dataloader import get_datasets, apply_transforms
@@ -49,6 +49,8 @@ class FlowerClient(fl.client.NumPyClient):
 
         # read from config
         lr, epochs, server_round = config["lr"], config["epochs"], config["server_round"]
+        patience_on_epoch, lr_adjustment_factor, min_lr = config['patience_on_epoch'], config['lr_adjustment_factor'], config['min_lr']
+
 
         # Define the optimizer
         optim = torch.optim.SGD(self.model.parameters(), lr=lr, momentum=0.9)
@@ -56,7 +58,7 @@ class FlowerClient(fl.client.NumPyClient):
         # do local training
         #train(self.model, self.trainloader, optim, epochs=epochs, device=self.device)
         #def train_with_early_stopping(client_id, net, trainloader, testloader, optimizer, epochs, device: str, patience=3, min_lr=0.001, max_lr=0.01):
-        results = train_with_early_stopping(self.model, self.trainloader, self.valloader, optim, epochs=epochs, device=self.device, patience=PATIENCE_ON_EPOCH, factor=FACTOR, min_lr=MIN_LR)
+        results = train_with_early_stopping(self.model, self.trainloader, self.valloader, optim, epochs=epochs, device=self.device, patience=patience_on_epoch, factor=lr_adjustment_factor, min_lr=min_lr)
         parameters = list(results['model_state'].values())
         self.set_parameters(parameters) ## setting up the best model
 
