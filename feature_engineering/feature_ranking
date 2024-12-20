@@ -1,0 +1,42 @@
+Rank	Feature
+1	Total Length of Bwd Packet
+2	Bwd Header Length
+3	Total Bwd packets
+4	Fwd Header Length
+5	Total Fwd Packet
+6	Idle Std
+7	Fwd IAT Std
+8	Total Length of Fwd Packet
+9	Bwd Packet Length Min
+10	Fwd Act Data Pkts
+11	Bwd IAT Max
+12	Bwd Packet Length Std
+13	Flow IAT Std
+14	Fwd Packet Length Std
+15	Active Min
+16	Bwd IAT Min
+17	Bwd IAT Std
+18	Bwd Init Win Bytes
+19	Active Std
+20	Flow Duration
+21	Fwd IAT Total
+22	Flow IAT Max
+23	Fwd IAT Min
+24	Idle Max
+25	Fwd Packet Length Max
+26	Fwd Packet Length Min
+27	Fwd Seg Size Min
+28	Idle Min
+29	Packet Length Min
+30	Flow IAT Min
+31	Flow IAT Mean
+32	Active Mean
+33	Bwd Packet Length Max
+34	Active Max
+35	Idle Mean
+36	Fwd IAT Max
+37	FWD Init Win Bytes
+38	Packet Length Max
+39	Packet Length Std
+40	Bwd IAT Total
+41	Packet Length Variance
