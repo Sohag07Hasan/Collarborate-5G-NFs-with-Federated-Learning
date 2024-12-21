@@ -43,7 +43,10 @@ class FLAccShield(FedAvg):
         min_lr=0.0001,
         improvement_threshold=0.01,  # Minimum accuracy improvement threshold
         training_rounds=20,    # Maximum number of rounds if not stopped early
-        patience_on_epoch = 3, #
+        lr_adjustment_patience_on_epoch = 3, #
+        early_stop_patience_on_epoch = 6, ## Client side early stopping threshold should be greater than doubled for LR adjustment
+        early_stop_patience_on_round = 5,
+        round_on_round_accuracy_threshold = 0.01,
         ff=1,
         fe=1,
         mfc=2,
@@ -51,19 +54,28 @@ class FLAccShield(FedAvg):
         mac=4
     ):
         super().__init__(fraction_fit=ff, fraction_evaluate=fe, min_fit_clients=mfc, min_evaluate_clients=mec, min_available_clients=mac, fit_metrics_aggregation_fn=weighted_average_fit, evaluate_metrics_aggregation_fn=weighted_average_eval, evaluate_fn=evaluate_fn)  # Initialize FedAvg with additional parameters
+        
         self.initial_lr = initial_lr
         self.initial_epochs = initial_epochs
         self.lr_adjustment_factor = lr_adjustment_factor # not in use
         self.min_lr = min_lr # not in use
-        self.patience_on_epoch = patience_on_epoch
+        self.lr_adjustment_patience_on_epoch = lr_adjustment_patience_on_epoch
+        self.early_stop_patience_on_epoch = early_stop_patience_on_epoch
+
         self.fit_configs = {}  # Store individual client configurations
         self.client_fit_metrics = {'accuracy': {}, 'loss': {}}  # Track evaluation metrics per client
         self.client_eval_metrics = {'accuracy': {}, 'loss': {}}  # Track evaluation metrics per client
         self.server_fit_metrics = {'accuracy': {}, 'loss': {}}  # Track evaluation metrics for server
         self.server_eval_metrics = {'accuracy': {}, 'loss': {}}  # Track evaluation metrics for server
         self.global_models = {} ##Store global model parameters
-        self.improvement_threshold = improvement_threshold ## accuracy should be improved by this threshold
-        self.threshold_rounds_for_early_stopping = 5 
+        
+        #self.improvement_threshold = improvement_threshold ## accuracy should be improved by this threshold
+        #self.threshold_rounds_for_early_stopping = 5
+
+        self.round_on_round_accuracy_threshold = round_on_round_accuracy_threshold
+        self.early_stop_patience_on_round = early_stop_patience_on_round
+       
+
         self.training_rounds = training_rounds
         self.current_round = 0
         self.client_mapping = {}
@@ -104,8 +116,9 @@ class FLAccShield(FedAvg):
                 "lr": self.initial_lr,
                 "epochs": self.initial_epochs,
                 "server_round": self.current_round,
-                "patience_on_epoch": self.patience_on_epoch,
+                "lr_adjustment_patience_on_epoch": self.lr_adjustment_patience_on_epoch,
                 "lr_adjustment_factor": self.lr_adjustment_factor,
+                "early_stop_patience_on_epoch": self.early_stop_patience_on_epoch,
                 "min_lr": self.min_lr
 
             }
@@ -275,7 +288,7 @@ class FLAccShield(FedAvg):
             if client_id not in self.best_accuracies:
                 self.best_accuracies[client_id] = accuracy
                 self.no_improvement_rounds[client_id] = 0
-            elif accuracy > self.best_accuracies[client_id] + self.improvement_threshold:
+            elif accuracy > self.best_accuracies[client_id] + self.round_on_round_accuracy_threshold:
                 # Update best accuracy and reset no-improvement counter
                 self.best_accuracies[client_id] = accuracy
                 self.no_improvement_rounds[client_id] = 0
@@ -284,7 +297,7 @@ class FLAccShield(FedAvg):
                 self.no_improvement_rounds[client_id] += 1
 
             # Track clients with no improvement
-            if self.no_improvement_rounds[client_id] >= self.threshold_rounds_for_early_stopping:
+            if self.no_improvement_rounds[client_id] >= self.early_stop_patience_on_round:
                 num_clients_with_no_improvement += 1
 
         # Step 3: Check if early stopping conditions are met (more than 50% clients show no improvement)

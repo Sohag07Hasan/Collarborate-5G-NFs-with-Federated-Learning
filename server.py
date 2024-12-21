@@ -32,7 +32,11 @@ from config import (
     MIN_EVAL_CLIENTS,
     LR_ADJUSTMENT_FACTOR,
     MIN_LR,
-    PATIENCE_ON_EPOCH
+    #PATIENCE_ON_EPOCH,
+    LR_ADJUSTMENT_PATIENCE_ON_EPOCH,
+    EARLY_STOP_PATIENCE_ON_EPOCH,
+    EARLY_STOP_PATIENCE_ON_ROUND,
+    ROUND_ON_ROUND_ACCURACY_THRESHOLD
 )
 from dataloader import get_centralized_testset  # Centralized testset loader
 
@@ -64,9 +68,12 @@ def create_strategy():
         initial_epochs = EPOCHS,
         lr_adjustment_factor = LR_ADJUSTMENT_FACTOR,
         min_lr = MIN_LR,
-        improvement_threshold = 0.01,
+        #improvement_threshold = 0.01,
         training_rounds = NUM_ROUNDS,
-        patience_on_epoch = PATIENCE_ON_EPOCH,
+        lr_adjustment_patience_on_epoch = LR_ADJUSTMENT_PATIENCE_ON_EPOCH,
+        early_stop_patience_on_epoch = EARLY_STOP_PATIENCE_ON_EPOCH,
+        early_stop_patience_on_round = EARLY_STOP_PATIENCE_ON_ROUND,
+        round_on_round_accuracy_threshold = ROUND_ON_ROUND_ACCURACY_THRESHOLD,
         ff = FRACTION_FIT, #fraction_fit
         fe = FRACTION_EVAL, #fraction_evaluate
         mfc = MIN_FIT_CLIENTS, # min_fit_clients

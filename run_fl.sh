@@ -1,6 +1,9 @@
 #!/bin/bash
 
-for FOLD in $(seq 1 1)
+  # Remove previous log files as well
+  rm -rf ./logs/*.log
+
+for FOLD in $(seq 1 5)
 do
   echo "Running fold $FOLD..."
 

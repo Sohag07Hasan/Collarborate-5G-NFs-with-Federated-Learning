@@ -1,41 +1,16 @@
 {
   "dataset_path": {
-    "FOLD": 1,
+    "FOLD": 2,
     "TRAIN_DATASET_PATH_PCA": "./feature_engineering/dataset/client_{0}/fold_{1}/pca/client_{0}_pca_train_dataset.csv",
     "TEST_DATASET_PATH_PCA": "./feature_engineering/dataset/client_{0}/fold_{1}/pca/client_{0}_pca_test_dataset.csv",
     "TRAIN_DATASET_PATH_ORIGINAL": "./feature_engineering/dataset/client_{0}/fold_{1}/client_{0}_scaled_train_dataset.csv",
     "TEST_DATASET_PATH_ORIGINAL": "./feature_engineering/dataset/client_{0}/fold_{1}/client_{0}_sclaed_test_dataset.csv"
   },
   "features": {
-    "NUM_FEATURES": 17,
+    "NUM_FEATURES": 14,
     "FEATURE_TYPE": "original",
-    "PCA_FEATURES": [
-      "PC1",
-      "PC2",
-      "PC3",
-      "PC4",
-      "Label"
-    ],
-    "ORIGINAL_FEATURES": [
-      "Total Length of Bwd Packet",
-      "Bwd Header Length",
-      "Total Bwd packets",
-      "Fwd Header Length",
-      "Total Fwd Packet",
-      "Idle Std",
-      "Fwd IAT Std",
-      "Total Length of Fwd Packet",
-      "Bwd Packet Length Min",
-      "Fwd Act Data Pkts",
-      "Bwd IAT Max",
-      "Bwd Packet Length Std",
-      "Flow IAT Std",
-      "Fwd Packet Length Std",
-      "Active Min",
-      "Bwd IAT Min",
-      "Bwd IAT Std",
-      "Label"
-    ]
+    "ALL_FEATURES": "./final_features.csv",
+    "LABEL_FEATURE": "Label"
   },
   "training": {
     "LEARNING_RATE": 0.0001,
@@ -46,10 +21,13 @@
   },
   "learning_rate_schedular": {
     "MIN_LR": 1e-06,
-    "LR_ADJUSTMENT_FACTOR": 0.1
+    "LR_ADJUSTMENT_FACTOR": 0.1,
+    "LR_ADJUSTMENT_PATIENCE_ON_EPOCH": 3
   },
   "early_stopping": {
-    "PATIENCE_ON_EPOCH": 3
+    "EARLY_STOP_PATIENCE_ON_EPOCH": 6,
+    "EARLY_STOP_PATIENCE_ON_ROUND": 5,
+    "ROUND_ON_ROUND_ACCURACY_THRESHOLD": 0.01
   },
   "results_path": {
     "FOLDER_NAME": "{0}_{1}_fold_{2}",
@@ -70,6 +48,6 @@
     "MIN_EVAL_CLIENTS": 4
   },
   "server": {
-    "SERVER_ADDRESS": "0.0.0.0:8081"
+    "SERVER_ADDRESS": "0.0.0.0:8082"
   }
 }

@@ -1,15 +1,12 @@
 from datasets import load_dataset
-from config import TRAIN_DATASET_PATH_ORIGINAL, TEST_DATASET_PATH_ORIGINAL, TRAIN_DATASET_PATH_PCA, TEST_DATASET_PATH_PCA, FOLD, NUM_FEATURES, FEATURE_TYPE, PCA_FEATURES, ORIGINAL_FEATURES
+from config import ( 
+    TRAIN_DATASET_PATH_ORIGINAL, TEST_DATASET_PATH_ORIGINAL, 
+    TRAIN_DATASET_PATH_PCA, TEST_DATASET_PATH_PCA, FOLD, NUM_FEATURES, FEATURE_TYPE,
+    ALL_FEATURES, LABEL_FEATURE,
+    #PCA_FEATURES, ORIGINAL_FEATURES
+    )
 import pandas as pd
 from sklearn.model_selection import train_test_split
-
-#import os
-#from datasets import Dataset
-#from flwr_datasets import FederatedDataset
-#from datasets.utils.logging import disable_progress_bar
-#from torchvision.transforms import Compose, ToTensor, Normalize
-#from config import NUM_CLIENTS
-
 
 def load_dataset(file_path):
     df = pd.read_csv(file_path)
@@ -20,28 +17,36 @@ def load_dataset(file_path):
 def get_training_datasets_by_client(client_id, test_size=0.2, fold=FOLD):
     if FEATURE_TYPE == 'pca':
         train_file_path = TRAIN_DATASET_PATH_PCA.format(client_id, fold)
-        features = PCA_FEATURES.copy()
+        #features = PCA_FEATURES.copy()
     else:
         train_file_path = TRAIN_DATASET_PATH_ORIGINAL.format(client_id, fold)
-        features = ORIGINAL_FEATURES.copy()
-    
+        #features = ORIGINAL_FEATURES.copy()
+    features = get_features(feature_count=NUM_FEATURES, type=FEATURE_TYPE)    
     training_dataset = load_dataset(train_file_path)
     training_dataset = training_dataset[features]
     train_set, val_set = train_test_split(training_dataset, test_size=test_size, random_state=42, stratify=training_dataset['Label'])
 
     return train_set, val_set
 
+##get features based on criteria number, and type
+def get_features(feature_count=NUM_FEATURES, type=FEATURE_TYPE):
+    df = pd.read_csv(ALL_FEATURES)
+    features = df[:feature_count].get(type).tolist()
+    features.append(LABEL_FEATURE)
+    return features
+
 ## client datasets
 def get_evaluation_datasets_by_client(client_id, fold=FOLD):    
     if FEATURE_TYPE == 'pca':
         test_file_path = TEST_DATASET_PATH_PCA.format(client_id, fold)
-        features = PCA_FEATURES.copy()
+        #features = PCA_FEATURES.copy()
     else:
         test_file_path = TEST_DATASET_PATH_ORIGINAL.format(client_id, fold)
-        features = ORIGINAL_FEATURES.copy()
+        #features = ORIGINAL_FEATURES.copy()
 
     testing_dataset = load_dataset(test_file_path)
     #print(len(features))
+    features = get_features(feature_count=NUM_FEATURES, type=FEATURE_TYPE)
     return testing_dataset[features]
 
 ## combine testset from all the clients

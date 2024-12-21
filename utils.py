@@ -40,7 +40,8 @@ def train_with_early_stopping(
     optimizer,
     epochs,
     device: str,
-    patience=3,
+    lr_patience=3,
+    early_stop_patience=6,
     factor=0.1,  # Factor by which the LR will be reduced
     min_lr=0.00001,  # Minimum LR after reduction
 ):
@@ -65,7 +66,7 @@ def train_with_early_stopping(
     }
 
     # ReduceLROnPlateau Scheduler
-    scheduler = ReduceLROnPlateau(optimizer, mode="max", patience=patience, factor=factor, min_lr=min_lr)
+    scheduler = ReduceLROnPlateau(optimizer, mode="max", patience=lr_patience, factor=factor, min_lr=min_lr)
 
     for epoch in range(epochs):
         #start the timer
@@ -124,7 +125,7 @@ def train_with_early_stopping(
         else:
             epochs_without_improvement += 1
 
-        if epochs_without_improvement >= 2 * patience:
+        if epochs_without_improvement >= early_stop_patience: #early stop patience should be 2xpatience
             #print(f"Early Stopping Triggered at Epoch {epoch + 1}.")
             break
 
