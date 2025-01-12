@@ -36,7 +36,7 @@ def get_features(feature_count=NUM_FEATURES, type=FEATURE_TYPE):
     return features
 
 ## client datasets
-def get_evaluation_datasets_by_client(client_id, fold=FOLD):    
+def get_evaluation_datasets_by_client(client_id, fold=FOLD, feature_count=NUM_FEATURES):    
     if FEATURE_TYPE == 'pca':
         test_file_path = TEST_DATASET_PATH_PCA.format(client_id, fold)
         #features = PCA_FEATURES.copy()
@@ -46,7 +46,7 @@ def get_evaluation_datasets_by_client(client_id, fold=FOLD):
 
     testing_dataset = load_dataset(test_file_path)
     #print(len(features))
-    features = get_features(feature_count=NUM_FEATURES, type=FEATURE_TYPE)
+    features = get_features(feature_count=feature_count, type=FEATURE_TYPE)
     return testing_dataset[features]
 
 ## combine testset from all the clients

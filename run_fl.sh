@@ -3,7 +3,7 @@
   # Remove previous log files as well
   rm -rf ./logs/*.log
 
-for FOLD in $(seq 1 5)
+for FOLD in $(seq 2 2)
 do
   echo "Running fold $FOLD..."
 
