@@ -1,11 +1,13 @@
 #!/bin/bash
 
-for FOLD in $(seq 1 5)
+rm -r ./logs/*.log
+
+for FOLD in $(seq 2 5)
 do
   echo "Running fold $FOLD..."
 
   # Calculate the port number dynamically (e.g., base port is 8088, increment by 1 for each fold)
-  PORT=$((8090 + FOLD))
+  PORT=$((6090 + FOLD))
 
   # Check if any process is using the desired port and kill it if found
   echo "Checking if port $PORT is in use..."
