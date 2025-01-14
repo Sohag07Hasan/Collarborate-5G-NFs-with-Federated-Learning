@@ -6,7 +6,7 @@ from utils import train, test, to_tensor
 from model import Net
 import torch
 from torch.utils.data import DataLoader
-from config import SERVER_ADDRESS, NUM_CLASSES, BATCH_SIZE
+from config import SERVER_ADDRESS, NUM_CLASSES, BATCH_SIZE, NUM_FEATURES
 #from simulation import client_fn_callback
 from flwr_datasets import FederatedDataset
 #from dataloader import get_datasets, apply_transforms
@@ -18,7 +18,7 @@ class FlowerClient(fl.client.NumPyClient):
 
         self.trainloader = trainloader
         self.valloader = valloader
-        self.model = Net(num_classes=NUM_CLASSES)
+        self.model = Net(input_size=NUM_FEATURES, num_classes=NUM_CLASSES)
 
         self.client_id = client_id #savign client ID
 
