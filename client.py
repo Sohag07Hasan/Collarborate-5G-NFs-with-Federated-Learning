@@ -2,7 +2,7 @@ import flwr as fl
 from collections import OrderedDict
 from typing import Dict, List, Tuple
 from flwr.common import NDArrays, Scalar
-from utils import train, test, to_tensor
+from utils import train, test, to_tensor, train_with_penalty
 from model import Net
 import torch
 from torch.utils.data import DataLoader
@@ -49,7 +49,7 @@ class FlowerClient(fl.client.NumPyClient):
         self.set_parameters(parameters)
 
         # read from config
-        lr, epochs = config["lr"], config["epochs"]
+        lr, epochs, alpha = config["lr"], config["epochs"], config["alpha"]
         
         #priting client info
         #print(f"[Client {self.client_id}] fit, config: {config}") 
@@ -58,7 +58,9 @@ class FlowerClient(fl.client.NumPyClient):
         optim = torch.optim.SGD(self.model.parameters(), lr=lr, momentum=0.9)
 
         # do local training
-        train(self.model, self.trainloader, optim, epochs=epochs, device=self.device)
+        #train(self.model, self.trainloader, optim, epochs=epochs, device=self.device)
+
+        train_with_penalty(self.model, self.trainloader, optim, epochs=epochs, device=self.device, alpha=alpha)
 
         # return the model parameters to the server as well as extra info (number of training examples in this case)
         return self.get_parameters({}), len(self.trainloader), {}

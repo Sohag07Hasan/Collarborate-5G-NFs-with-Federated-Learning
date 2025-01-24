@@ -27,7 +27,8 @@ def fit_config(server_round: int) -> Dict[str, Scalar]:
     config = {
         "epochs": EPOCHS,  # Number of local epochs done by clients
         "lr": LEARNING_RATE,  # Learning rate to use by clients during fit()
-        "server_round": server_round ##Number of Rounds sent to Client
+        "server_round": server_round, ##Number of Rounds sent to Client,
+        "alpha": 0.1
     }
     return config
 

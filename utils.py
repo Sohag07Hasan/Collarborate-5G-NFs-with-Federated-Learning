@@ -12,6 +12,42 @@ from torch.utils.data import DataLoader, TensorDataset
 import os
 
 
+## Training function taht will be used as penalty
+## for FedAVGFCR strategy
+## Train function called from client.py
+def train_with_penalty(net, trainloader, optim, epochs, device: str, alpha: float):
+    """Train the network on the training set with a dynamic penalty term."""
+    criterion = torch.nn.CrossEntropyLoss()
+    net.train()
+    
+    for epoch in range(epochs):
+        for batch in trainloader:
+            features, labels = batch[0].to(device), batch[1].to(device)
+            optim.zero_grad()
+
+            # Forward pass
+            output = net(features)
+            
+            # Compute main loss
+            base_loss = criterion(output, labels)
+            
+            # Calculate penalty term (fn and fp should be provided externally or calculated here)
+            # Replace the following lines with your logic for fn and fp calculations
+            fn = ((labels == 1) & (output.argmax(dim=1) == 0)).sum().item()  # Example false negatives
+            fp = ((labels == 0) & (output.argmax(dim=1) == 1)).sum().item()  # Example false positives
+            num_samples = labels.size(0)
+            penalty = alpha * (fn + fp) / num_samples
+
+            # Combine main loss and penalty
+            total_loss = base_loss + penalty
+
+            # Backward pass
+            total_loss.backward()
+            optim.step()
+
+
+
+## Tain function called from client.py
 def train(net, trainloader, optim, epochs, device: str):
     """Train the network on the training set."""
     criterion = torch.nn.CrossEntropyLoss()
