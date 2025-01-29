@@ -266,7 +266,7 @@ from config import NUM_FEATURES, NUM_CLASSES
 #         return x
 
 
-## 17 features
+## 17 features (not in use)
 
 # class Net(nn.Module):
 #     def __init__(self, input_size: int = 17, num_classes: int = 2) -> None:
@@ -318,7 +318,7 @@ from config import NUM_FEATURES, NUM_CLASSES
 #         x = self.fc3(x)
 #         return x
     
-# #Features 18~24
+#Features 17~24
 # class Net(nn.Module):
 #     def __init__(self, input_size: int = NUM_FEATURES, num_classes: int = NUM_CLASSES) -> None:
 #         super(Net, self).__init__()
@@ -370,7 +370,7 @@ from config import NUM_FEATURES, NUM_CLASSES
 #         return x
 
 
-# Features like 16, 15, 14, 13, 12`
+# ##Features like 16, 15, 14, 13, 12`
 class Net(nn.Module):
     def __init__(self, input_size: int = NUM_FEATURES, num_classes: int = NUM_CLASSES) -> None:
         super(Net, self).__init__()

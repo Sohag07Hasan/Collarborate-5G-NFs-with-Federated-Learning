@@ -60,7 +60,8 @@ class FlowerClient(fl.client.NumPyClient):
         # do local training
         #train(self.model, self.trainloader, optim, epochs=epochs, device=self.device)
 
-        train_with_penalty(self.model, self.trainloader, optim, epochs=epochs, device=self.device, alpha=alpha)
+        #valloader and alpha to calcuate penalty
+        train_with_penalty(self.model, self.trainloader, self.valloader, optim, epochs=epochs, device=self.device, alpha=alpha)
 
         # return the model parameters to the server as well as extra info (number of training examples in this case)
         return self.get_parameters({}), len(self.trainloader), {}
