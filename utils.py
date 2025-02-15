@@ -12,7 +12,7 @@ from torch.utils.data import DataLoader, TensorDataset
 import os
 
 
-def train(net, trainloader, optim, epochs, device: str):
+def train(net, trainloader, optim, epochs, device: str, mu, global_weights):
     """Train the network on the training set."""
     criterion = torch.nn.CrossEntropyLoss()
     net.train()
@@ -21,6 +21,13 @@ def train(net, trainloader, optim, epochs, device: str):
             features, labels = batch[0].to(device), batch[1].to(device)
             optim.zero_grad()
             loss = criterion(net(features), labels)
+
+            ## fedprox code
+            prox_term = 0.0
+            for param, global_param in zip(net.parameters(), global_weights):
+                prox_term += torch.norm(param - global_param, p=2) ** 2  # L2 Norm
+            loss += (mu / 2) * prox_term  # Add the FedProx penalty
+
             loss.backward()
             optim.step()
 

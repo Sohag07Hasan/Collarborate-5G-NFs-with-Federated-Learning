@@ -6,7 +6,7 @@ from utils import train, test, to_tensor
 from model import Net
 import torch
 from torch.utils.data import DataLoader
-from config import SERVER_ADDRESS, NUM_CLASSES, BATCH_SIZE
+from config import SERVER_ADDRESS, NUM_CLASSES, BATCH_SIZE, PROXIMAL_MU
 #from simulation import client_fn_callback
 from flwr_datasets import FederatedDataset
 #from dataloader import get_datasets, apply_transforms
@@ -21,6 +21,8 @@ class FlowerClient(fl.client.NumPyClient):
         self.model = Net(num_classes=NUM_CLASSES)
 
         self.client_id = client_id #savign client ID
+
+        self.mu = PROXIMAL_MU ## setting proximal         
 
         # Determine device
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -57,8 +59,10 @@ class FlowerClient(fl.client.NumPyClient):
         # Define the optimizer
         optim = torch.optim.SGD(self.model.parameters(), lr=lr, momentum=0.9)
 
+        global_weights = [param.clone().detach() for param in self.model.parameters()]
+
         # do local training
-        train(self.model, self.trainloader, optim, epochs=epochs, device=self.device)
+        train(self.model, self.trainloader, optim, epochs=epochs, device=self.device, mu=self.mu, global_weights=global_weights)
 
         # return the model parameters to the server as well as extra info (number of training examples in this case)
         return self.get_parameters({}), len(self.trainloader), {}

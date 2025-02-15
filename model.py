@@ -370,7 +370,7 @@ from config import NUM_FEATURES, NUM_CLASSES
 #         return x
 
 
-# Features like 16, 15, 14, 13, 12`
+# Features like 16, 15, 14, 13, 12
 class Net(nn.Module):
     def __init__(self, input_size: int = NUM_FEATURES, num_classes: int = NUM_CLASSES) -> None:
         super(Net, self).__init__()

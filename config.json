@@ -7,9 +7,9 @@
     "TEST_DATASET_PATH_ORIGINAL": "../IDS/feature_engineering/dataset/client_{0}/fold_{1}/client_{0}_sclaed_test_dataset.csv"
   },
   "features": {
-    "NUM_FEATURES": 14,
+    "NUM_FEATURES": 10,
     "FEATURE_TYPE": "original",
-    "ALL_FEATURES": "./final_features.csv",
+    "ALL_FEATURES": "../IDS/final_features_FL.csv",
     "LABEL_FEATURE": "Label"
   },
   "training": {
@@ -32,10 +32,11 @@
     "FRACTION_FIT": 1,
     "FRACTION_EVAL": 1,
     "MIN_FIT_CLIENTS": 4,
-    "MIN_EVAL_CLIENTS": 4
+    "MIN_EVAL_CLIENTS": 4,
+    "PROXIMAL_MU": 0.01
   },
   "server": {
-    "SERVER_ADDRESS": "0.0.0.0:3109"
+    "SERVER_ADDRESS": "0.0.0.0:2105"
   },
   "early_stopping": {
     "EARLY_STOPPING_ROUNDS": 3,
