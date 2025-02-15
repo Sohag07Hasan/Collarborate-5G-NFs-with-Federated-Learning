@@ -12,17 +12,37 @@ from torch.utils.data import DataLoader, TensorDataset
 import os
 
 
-def train(net, trainloader, optim, epochs, device: str):
+def train(net, trainloader, optim, epochs, device: str, q):
     """Train the network on the training set."""
     criterion = torch.nn.CrossEntropyLoss()
     net.train()
+
+    total_loss = 0.0
+    total_samples = 0
+
     for _ in range(epochs):
         for batch in trainloader:
             features, labels = batch[0].to(device), batch[1].to(device)
             optim.zero_grad()
             loss = criterion(net(features), labels)
+
+            # Compute QFedAvg loss: loss^q
+            weighted_loss = (loss ** q) / q if q != 0 else loss  # Avoid 0 division
+
             loss.backward()
             optim.step()
+
+            # Accumulate loss for hi calculation
+            total_loss += loss.item() * len(labels)
+            total_samples += len(labels)
+    
+    # Compute average loss across all samples
+    avg_loss = total_loss / total_samples
+
+    # Compute fairness weight h_i = loss^(q-1)
+    hi = avg_loss ** (q - 1) if q != 0 else 1  # Avoid division by zero
+
+    return avg_loss, hi
 
 
 def test(net, testloader, device: str):

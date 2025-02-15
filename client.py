@@ -6,7 +6,7 @@ from utils import train, test, to_tensor
 from model import Net
 import torch
 from torch.utils.data import DataLoader
-from config import SERVER_ADDRESS, NUM_CLASSES, BATCH_SIZE, NUM_FEATURES
+from config import SERVER_ADDRESS, NUM_CLASSES, BATCH_SIZE, NUM_FEATURES, Q_PARAM
 #from simulation import client_fn_callback
 from flwr_datasets import FederatedDataset
 #from dataloader import get_datasets, apply_transforms
@@ -21,6 +21,8 @@ class FlowerClient(fl.client.NumPyClient):
         self.model = Net(input_size=NUM_FEATURES, num_classes=NUM_CLASSES)
 
         self.client_id = client_id #savign client ID
+
+        self.q_param = Q_PARAM
 
         # Determine device
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -57,8 +59,8 @@ class FlowerClient(fl.client.NumPyClient):
         # Define the optimizer
         optim = torch.optim.SGD(self.model.parameters(), lr=lr, momentum=0.9)
 
-        # do local training
-        train(self.model, self.trainloader, optim, epochs=epochs, device=self.device)
+        # do local training compute fairness weight `hi`
+        avg_loss, hi = train(self.model, self.trainloader, optim, epochs=epochs, device=self.device, q = self.q_param)
 
         # return the model parameters to the server as well as extra info (number of training examples in this case)
         return self.get_parameters({}), len(self.trainloader), {}

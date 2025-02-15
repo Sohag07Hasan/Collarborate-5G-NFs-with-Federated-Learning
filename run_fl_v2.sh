@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # List of NUM_FEATURES values to iterate over
-NUM_FEATURES_LIST=(30 41)
+NUM_FEATURES_LIST=(4 5 6 7 8 9 10)
 
 # Loop over NUM_FEATURES values
 for NUM_FEATURES in "${NUM_FEATURES_LIST[@]}"; do
@@ -16,7 +16,7 @@ for NUM_FEATURES in "${NUM_FEATURES_LIST[@]}"; do
     echo "Running fold $FOLD with NUM_FEATURES=$NUM_FEATURES..."
 
     # Calculate the port number dynamically (e.g., base port is 8088, increment by 1 for each fold)
-    PORT=$((3070 + FOLD + NUM_FEATURES))
+    PORT=$((9070 + FOLD + NUM_FEATURES))
 
     # Check if any process is using the desired port and kill it if found
     echo "Checking if port $PORT is in use..."
