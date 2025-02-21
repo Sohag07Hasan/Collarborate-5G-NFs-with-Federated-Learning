@@ -114,7 +114,7 @@ def prepare_file_path(path):
     # Check if the directory exists
     if not os.path.exists(directory):
         # If the directory does not exist, create it
-        os.makedirs(directory)
+        os.makedirs(directory, exist_ok=True)
     return file_path
 
 
