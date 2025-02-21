@@ -1,6 +1,6 @@
 import flwr as fl
 from dataloader import get_training_datasets_by_client
-from client import create_client
+from client import create_client, get_gprc_option_for_client
 from config import SERVER_ADDRESS
 
 #client number
@@ -15,4 +15,5 @@ if __name__ =="__main__":
     fl.client.start_client(
         server_address=SERVER_ADDRESS, 
         client=create_client(training, validation, client_id)
+        #grpc_options=get_gprc_option_for_client()
     )

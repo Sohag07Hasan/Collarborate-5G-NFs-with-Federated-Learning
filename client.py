@@ -91,6 +91,18 @@ def create_client(training_set, validation_set, client_id: int) -> fl.client.Cli
     # Create and return client
     return FlowerClient(trainloader, valloader, client_id).to_client()
 
+##client options for gprc
+def get_gprc_option_for_client():
+    client_options = [
+        ('grpc.keepalive_time_ms', 10000),
+        ('grpc.keepalive_timeout_ms', 5000),
+        ('grpc.keepalive_permit_without_calls', True),
+        ('grpc.http2.max_pings_without_data', 0),
+        ('grpc.http2.min_time_between_pings_ms', 10000),
+    ]
+
+    return client_options
+
 
 if __name__ =="__main__":
     print('client.py')

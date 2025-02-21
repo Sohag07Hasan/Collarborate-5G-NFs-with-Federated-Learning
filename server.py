@@ -106,10 +106,23 @@ if __name__ == "__main__":
     server_config = fl.server.ServerConfig(num_rounds=NUM_ROUNDS)
     strategy = create_strategy(fit_config, weighted_average, get_evaluate_fn(centralized_testset), fit_metrics_aggregation)
     
+    ##gprc related settings
+    server_options = [
+        ('grpc.keepalive_time_ms', 10000),           # Send keepalive ping every 10s
+        ('grpc.keepalive_timeout_ms', 5000),         # Timeout if no response in 5s
+        ('grpc.keepalive_permit_without_calls', True),
+        ('grpc.http2.max_pings_without_data', 0),    # Allow pings even with no data
+        ('grpc.http2.min_time_between_pings_ms', 10000), # Min 10s between pings
+    ]
+
     history = fl.server.start_server(
         server_address=SERVER_ADDRESS,
         config=server_config,
         strategy=strategy,  # Use the imported strategy
+
+        ##custom for gprc
+        #grpc_max_message_length=1024*1024*50,
+        #grpc_options=server_options  # Apply keepalive settings
     )
     # End timing
     end_time = time.time()
