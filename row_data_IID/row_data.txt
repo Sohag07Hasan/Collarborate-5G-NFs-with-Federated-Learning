@@ -1,0 +1,83 @@
+.
+├── client_1
+│   ├── attack
+│   │   ├── tcp_ack.pcap_Flow.csv
+│   │   ├── tcp_fin.pcap_Flow.csv
+│   │   ├── tcp_push.pcap_Flow.csv
+│   │   ├── tcp_syn.pcap_Flow.csv
+│   │   ├── tcp_urg.pcap_Flow.csv
+│   │   ├── tcp_xmas.pcap_Flow.csv
+│   │   ├── tcp_ymas.pcap_Flow.csv
+│   │   └── udp_flood.pcap_Flow.csv
+│   ├── benign
+│   │   ├── upf1_benign_1.pcap_Flow.csv
+│   │   ├── upf1_benign_2.pcap_Flow.csv
+│   │   ├── upf1_benign_3.pcap_Flow.csv
+│   │   └── upf1_benign_4.pcap_Flow.csv
+│   ├── icmp_flood.pcap_Flow.csv
+│   └── tcp_scan.pcap_Flow.csv
+├── client_2
+│   ├── attack
+│   │   ├── upf2_tcp_ack.pcap_Flow.csv
+│   │   ├── upf2_tcp_fin.pcap_Flow.csv
+│   │   ├── upf2_tcp_push.pcap_Flow.csv
+│   │   ├── upf2_tcp_syn.pcap_Flow.csv
+│   │   ├── upf2_tcp_urg.pcap_Flow.csv
+│   │   ├── upf2_tcp_xmas.pcap_Flow.csv
+│   │   ├── upf2_tcp_ymas.pcap_Flow.csv
+│   │   └── upf2_upd_flood.pcap_Flow.csv
+│   ├── benign
+│   │   ├── upf2_benign_1.pcap_Flow.csv
+│   │   ├── upf2_benign_2.pcap_Flow.csv
+│   │   ├── upf2_benign_3.pcap_Flow.csv
+│   │   └── upf2_benign_4.pcap_Flow.csv
+│   ├── upf2_icmp_flood_pcap_Flow.csv
+│   ├── upf2_tcp_scan.pcap_Flow.csv
+│   └── upf2_tcp_syn_180.pcap_Flow.csv
+├── client_3
+│   ├── 27smurfupf1.pcap_Flow.csv
+│   ├── attack
+│   │   ├── 12udpfloodupf1.pcap_Flow.csv
+│   │   ├── ack1.pcap_Flow.csv
+│   │   ├── fin1.pcap_Flow.csv
+│   │   ├── push1.pcap_Flow.csv
+│   │   ├── syn1.pcap_Flow.csv
+│   │   ├── urg1.pcap_Flow.csv
+│   │   ├── xmas1.pcap_Flow.csv
+│   │   └── ymas1.pcap_Flow.csv
+│   ├── benign
+│   │   ├── 29Aprilupf1.pcap_Flow.csv
+│   │   ├── 2maydownload-1upf1.pcap_Flow.csv
+│   │   ├── 2maydownloadupf1.pcap_Flow.csv
+│   │   ├── 2maysshupf1.pcap_Flow.csv
+│   │   ├── 2mayupf1.pcap_Flow.csv
+│   │   ├── 30-1upf1.pcap_Flow.csv
+│   │   ├── 30Aprilupf1.pcap_Flow.csv
+│   │   ├── 30pingupf1.pcap_Flow.csv
+│   │   └── 30upf1.pcap_Flow.csv
+│   └── rst1.pcap_Flow.csv
+├── client_4
+│   ├── 27smurfupf2.pcap_Flow.csv
+│   ├── attack
+│   │   ├── 12udpfloodupf2.pcap_Flow.csv
+│   │   ├── ack2.pcap_Flow.csv
+│   │   ├── fin2.pcap_Flow.csv
+│   │   ├── push2.pcap_Flow.csv
+│   │   ├── syn2.pcap_Flow.csv
+│   │   ├── urg2.pcap_Flow.csv
+│   │   ├── xmas2.pcap_Flow.csv
+│   │   └── ymas2.pcap_Flow.csv
+│   ├── benign
+│   │   ├── 29Aprilupf2.pcap_Flow.csv
+│   │   ├── 2maydownload-1upf2.pcap_Flow.csv
+│   │   ├── 2maydownloadupf2.pcap_Flow.csv
+│   │   ├── 2maysshupf2.pcap_Flow.csv
+│   │   ├── 2mayupf2.pcap_Flow.csv
+│   │   ├── 30-1upf2.pcap_Flow.csv
+│   │   ├── 30Aprilupf2.pcap_Flow.csv
+│   │   ├── 30pingupf2.pcap_Flow.csv
+│   │   └── 30upf2.pcap_Flow.csv
+│   └── rst2.pcap_Flow.csv
+└── row_data.txt
+
+12 directories, 68 files
